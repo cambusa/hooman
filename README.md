@@ -14,7 +14,9 @@ Four space: one tabulation
 
 ```<<   >>```: text
 
-```---```: remark
+```***```: remark
+
+```-->```: include file 
 
 ---
 
@@ -37,10 +39,12 @@ EXTRACT
     ...        
         
 TRANSFORM
-    --- Script follows
+    *** Script follows
+    [Javascript]
+        --> sample.js
     
 LOAD
-    --- Other stuffs
+    *** Other stuffs
     
 ```
 
