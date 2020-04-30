@@ -36,7 +36,7 @@ EXSTRACT
         
 TRANSFORM
     ...
-LOAD<br>
+LOAD
     ...
 ```
 
@@ -45,8 +45,8 @@ LOAD<br>
 _Example for texnical document_
 
 ```    
-HOOMAN<br>
-    VERSION 1<br>
+HOOMAN
+    VERSION 1
 
 DOCUMENT
     <<
