@@ -1,6 +1,6 @@
-# Hooman v1.0
+# Hooman v1.0 
 
-__Human-readable configuration language specification__
+__Human-readable configuration language specification - (cc) 2020 Rodolfo Calzetti__
 
 ## Rules
 
@@ -36,8 +36,7 @@ EXTRACT
             OFFSET 11
             TYPE CHAR
             LENGTH 50
-    ...        
-        
+         
 TRANSFORM
     *** Script follows
     [Javascript]
