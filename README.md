@@ -33,9 +33,9 @@ EXTRACT
             TYPE CHAR
             LENGTH 10
         DESCRIPTION
-            OFFSET 1
+            OFFSET 11
             TYPE CHAR
-            LENGTH 10
+            LENGTH 50
     ...        
         
 TRANSFORM
