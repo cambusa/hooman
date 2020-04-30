@@ -14,6 +14,8 @@ Four space: one tabulation
 
 ```<<   >>```: text
 
+```---```: remark
+
 ---
 
 _Example for ETL configuration_
@@ -35,9 +37,11 @@ EXTRACT
     ...        
         
 TRANSFORM
-    ...
+    --- Script follows
+    
 LOAD
-    ...
+    --- Other stuffs
+    
 ```
 
 ---
