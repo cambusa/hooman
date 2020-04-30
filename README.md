@@ -8,7 +8,7 @@ __Human-readable configuration language specification - (cc) 2020 Rodolfo Calzet
 
 ```Spaces```: assignement
 
-```Four space```: one tabulation
+```Four space```: a tabular key
 
 ```[]```: change mode
 
