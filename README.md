@@ -22,7 +22,7 @@ _Example for ETL configuration_
 HOOMAN
     VERSION 1
 
-EXSTRACT
+EXTRACT
     DATA
         CODE
             OFFSET 1
