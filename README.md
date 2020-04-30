@@ -18,7 +18,7 @@ Specifications are being finalized...
 
 ```***```: remark
 
-```-->```: include file 
+```<--```: file include 
 
 ---
 
@@ -42,7 +42,7 @@ EXTRACT
 TRANSFORM
     *** Script follows
     <<Javascript
-        --> sample.js
+        <-- sample.js
     Javascript>>
     
 LOAD
