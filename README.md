@@ -2,6 +2,8 @@
 
 __Human-readable configuration language specification - (cc) 2020 Rodolfo Calzetti__
 
+Specifications are being finalized...
+
 ## Rules
 
 ```New line + Indentation```: belonging
@@ -10,9 +12,9 @@ __Human-readable configuration language specification - (cc) 2020 Rodolfo Calzet
 
 ```Four space```: a tabular key
 
-```[]```: change mode
-
 ```<<   >>```: text
+
+```<<TAG  ...  TAG>>  ```: open/close mode
 
 ```***```: remark
 
@@ -39,8 +41,9 @@ EXTRACT
          
 TRANSFORM
     *** Script follows
-    [Javascript]
+    <<Javascript
         --> sample.js
+    Javascript>>
     
 LOAD
     *** Other stuffs
@@ -59,8 +62,10 @@ DOCUMENT
     <<
         Trick to solve integrals of rational functions
     >>
-    [LATEX]
+    <<LATEX
         \int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}
+    LATEX>>
+    
 ```    
     
 
