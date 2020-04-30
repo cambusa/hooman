@@ -4,13 +4,13 @@ __Human-readable configuration language specification__
 
 ## Rules
 
-New line + Indentation: belonging
+```New line + Indentation```: belonging
 
-Space: assignement
+```Spaces```: assignement
+
+```Four space```: one tabulation
 
 ```[]```: change mode
-
-Four space: one tabulation
 
 ```<<   >>```: text
 
