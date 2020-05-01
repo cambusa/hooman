@@ -2,7 +2,6 @@
 
 __Human-readable configuration language specification - (cc) 2020 Rodolfo Calzetti__
 
-Specifications are being finalized...
 
 ## Rules
 
