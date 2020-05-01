@@ -7,9 +7,11 @@ __Human-readable configuration language specification - (cc) 2020 Rodolfo Calzet
 
 ```New line + Indentation```: belonging
 
-```Spaces```: assignement
+```Four leading spaces```: a tabular key
 
-```Four space```: a tabular key
+```Spaces and tabs after a variable```: assignement
+
+```+```: increment by one (of a sibling key)
 
 ```<<   >>```: text
 
@@ -65,6 +67,47 @@ DOCUMENT
         \int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}
     LATEX>>
     
+```    
+    
+
+---
+
+_Example for lists and arrays_
+
+```    
+HOOMAN
+    VERSION 1
+
+SHOPPING_LIST
+    1 apples
+    2 milk
+    3 oatmeal
+    
+*** But also...
+SHOPPING_LIST_2
+    1 apples
+    + milk
+    + oatmeal
+
+WORKSHEET
+    ROWS 
+        1
+            COLOR WHITE
+            COLS
+                1
+                    LABEL Amount
+                    TYPE FLOAT
+                    VALUE 1234.56
+        +
+            COLOR YELLOW
+            COLS
+                +
+                    LABEL Name 
+                    TYPE CHAR
+                    VALUE Goofy
+            
+    
+        
 ```    
     
 
