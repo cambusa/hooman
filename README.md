@@ -1,6 +1,6 @@
 # Hooman v1.0 
 
-__Human-readable configuration language specification - (cc) 2020 Rodolfo Calzetti__
+__Specification for a new human-readable configuration language - (cc) 2020 Rodolfo Calzetti__
 
 
 ## Rules
