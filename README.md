@@ -21,6 +21,8 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 
 ```<--```: file include 
 
+```#```: numerical index in the syntactic rules 
+
 ---
 
 _Example for ETL configuration_
@@ -120,34 +122,16 @@ hooman
             name
             address
                 city
+        
         worksheet
             rows 
-                index
+                #
                     color \w+
                     cols
-                        index
+                        #
                             label \w+
                             type (float|char|date)
                             value .
-        worksheet
-            rows 
-                1
-                +
-        worksheet
-            rows 
-                index
-                    cols
-                        1
-                        +
-        worksheet
-            rows 
-                index
-                    cols
-                        index
-                            type float
-                            value \d+(\.\d+)?
-            
-
 data
     name Rodolfo
     address
