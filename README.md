@@ -112,7 +112,7 @@ worksheet
         
 ```    
     
-_Example with syntax check_
+_Example with syntax checking_
 
 ```    
 hooman
@@ -156,7 +156,7 @@ worksheet
 
 ```    
 
-_Example with external syntax check_
+_Example with external syntax checking_
 
 ```    
 hooman
