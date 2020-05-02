@@ -21,13 +21,14 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 
 ```<--```: file include 
 
-```#```: numerical index in the syntactic rules 
+```#```: numerical index in the syntactic structure 
+
+```==>```: entail in the syntactic rules 
 
 ---
 
 ## Todo
 
-- In syntax checking, what to do if _type_ is _float_ and you want the _value_ to be _\d+(\.\d+)_  ???
 - Reader for file Hooman
 - Editor for file Hooman (with intellisense deduced from the syntactic rules)
 
@@ -126,20 +127,34 @@ _Example with syntax checking_
 hooman
     version 1
     syntax
-        data
-            name
-            address
-                city
-        
-        worksheet
-            rows 
-                #
-                    color \w+
-                    cols
-                        #
-                            label \w+
-                            type (float|char|date)
-                            value .
+        structure
+            data
+                name
+                address
+                    city
+
+            worksheet
+                rows 
+                    #
+                        color
+                        cols
+                            #
+                                label
+                                type
+                                value
+        rules
+            1
+                ==> 
+                type (char|float|date)
+            +
+                type float
+                ==>
+                value \d+(\.\d+)?
+            +
+                type date
+                ==>
+                value \d{8}
+
 data
     name Rodolfo
     address
