@@ -1,6 +1,6 @@
 # Hooman v1.0 
 
-__Specification for a new human-readable configuration language - (cc) 2020 Rodolfo Calzetti__
+__Specification for a new human-writable configuration language - (cc) 2020 Rodolfo Calzetti__
 
 
 ## Rules
@@ -26,28 +26,28 @@ __Specification for a new human-readable configuration language - (cc) 2020 Rodo
 _Example for ETL configuration_
 
 ```    
-HOOMAN
-    VERSION 1
+hooman
+    version 1
 
-EXTRACT
-    DATA
-        CODE
-            OFFSET 1
-            TYPE CHAR
-            LENGTH 10
-        DESCRIPTION
-            OFFSET 11
-            TYPE CHAR
-            LENGTH 50
+extract
+    data
+        code
+            offset 1
+            type char
+            length 10
+        description
+            offset 11
+            type char
+            length 50
          
-TRANSFORM
+transform
     *** Script follows
-    <<Javascript
+    <<javascript
         <-- sample.js
-    Javascript>>
+    javascript>>
     
-LOAD
-    *** Other stuffs
+load
+    *** other stuffs
     
 ```
 
@@ -56,16 +56,16 @@ LOAD
 _Example for texnical document_
 
 ```    
-HOOMAN
-    VERSION 1
+hooman
+    version 1
 
-DOCUMENT
+document
     <<
         Trick to solve integrals of rational functions
     >>
-    <<LATEX
+    <<latex
         \int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}
-    LATEX>>
+    latex>>
     
 ```    
     
@@ -75,39 +75,116 @@ DOCUMENT
 _Example for lists and arrays_
 
 ```    
-HOOMAN
-    VERSION 1
+hooman
+    version 1
 
-SHOPPING_LIST
+shopping_list
     1 apples
     2 milk
     3 oatmeal
     
-*** But also...
-SHOPPING_LIST_2
+*** but also...
+shopping_list_2
     1 apples
     + milk
     + oatmeal
 
-WORKSHEET
-    ROWS 
+worksheet
+    rows 
         1
-            COLOR WHITE
-            COLS
+            color white
+            cols
                 1
-                    LABEL Amount
-                    TYPE FLOAT
-                    VALUE 1234.56
+                    label Amount
+                    type float
+                    value 1234.56
         +
-            COLOR YELLOW
-            COLS
+            color yellow
+            cols
                 +
-                    LABEL Name 
-                    TYPE CHAR
-                    VALUE Goofy
+                    label Name 
+                    type char
+                    value Goofy
             
     
         
 ```    
     
+_Example with syntax check_
+
+```    
+hooman
+    version 1
+    syntax
+        data
+            name
+            address
+                city
+        worksheet
+            rows 
+                index
+                    color \w+
+                    cols
+                        index
+                            label \w+
+                            type (float|char|date)
+                            value .
+            
+
+data
+    name Rodolfo
+    address
+        city Milan
+
+worksheet
+    rows 
+        1
+            color white
+            cols
+                1
+                    label Amount
+                    type float
+                    value 1234.56
+        +
+            color yellow
+            cols
+                +
+                    label Name 
+                    type char
+                    value Goofy
+
+```    
+
+_Example with external syntax check_
+
+```    
+hooman
+    version 1
+    syntax
+        <<hooman
+            <--     ..\syntax.hooman
+        hooman>>
+data
+    name Rodolfo
+    address
+        city Milan
+
+worksheet
+    rows 
+        1
+            color white
+            cols
+                1
+                    label Amount
+                    type float
+                    value 1234.56
+        +
+            color yellow
+            cols
+                +
+                    label Name 
+                    type char
+                    value Goofy
+
+```    
 
