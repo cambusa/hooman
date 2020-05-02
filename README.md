@@ -25,6 +25,14 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 
 ---
 
+## Todo
+
+- In syntax checking, what to do if _type_ is _float_ and you want the _value_ to be _\d+(\.\d+)_  ???
+- Reader for file Hooman
+- Editor for file Hooman (with intellisense deduced from the syntactic rules)
+
+---
+
 _Example for ETL configuration_
 
 ```    
