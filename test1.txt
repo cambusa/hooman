@@ -1,0 +1,31 @@
+hooman
+    version 1
+
+extract
+    data
+        code
+            offset 1
+            type char
+            length 10
+        description
+            offset 11
+            type char
+            length 50
+         
+transform
+    *** Script follows
+    <<javascript
+        <-- sample.js
+    javascript>>
+    
+subhooman
+    *** Script follows
+    <<hooman
+        <-- sample.txt
+    hooman>>
+    
+load
+    *** other stuffs
+    <<
+        Scrivo qualche cosa
+    >>

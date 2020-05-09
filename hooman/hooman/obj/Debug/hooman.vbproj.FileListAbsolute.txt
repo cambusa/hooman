@@ -1,0 +1,8 @@
+C:\Sviluppo\hooman\hooman\hooman\bin\Debug\hooman.dll
+C:\Sviluppo\hooman\hooman\hooman\bin\Debug\hooman.pdb
+C:\Sviluppo\hooman\hooman\hooman\bin\Debug\hooman.xml
+C:\Sviluppo\hooman\hooman\hooman\obj\Debug\hooman.Resources.resources
+C:\Sviluppo\hooman\hooman\hooman\obj\Debug\hooman.vbproj.GenerateResource.Cache
+C:\Sviluppo\hooman\hooman\hooman\obj\Debug\hooman.dll
+C:\Sviluppo\hooman\hooman\hooman\obj\Debug\hooman.xml
+C:\Sviluppo\hooman\hooman\hooman\obj\Debug\hooman.pdb

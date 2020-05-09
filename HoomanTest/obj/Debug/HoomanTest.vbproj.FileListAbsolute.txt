@@ -1,0 +1,14 @@
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\HoomanTest.exe.config
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\HoomanTest.exe
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\HoomanTest.pdb
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\HoomanTest.xml
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\hooman.dll
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\hooman.pdb
+C:\Sviluppo\hooman\HoomanTest\bin\Debug\hooman.xml
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.vbprojResolveAssemblyReference.cache
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.Form1.resources
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.Resources.resources
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.vbproj.GenerateResource.Cache
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.exe
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.xml
+C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.pdb

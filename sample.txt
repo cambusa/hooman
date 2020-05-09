@@ -1,0 +1,8 @@
+name
+    surname     Calogero
+    first_name Pippo
+    
+indirizzo
+    city milano
+    cap 20095
+    
