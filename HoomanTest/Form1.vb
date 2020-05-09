@@ -12,14 +12,14 @@ Public Class Form1
 
             If H.Count(I) = -1 Then
 
-                With H.Limbs(I)
+                With H(I)
                     Debug.Print(.Name + ":" + .Value)
                 End With
 
             Else
 
-                With H.Limbs(I)
-                     Debug.Print(.Name)
+                With H(I)
+                    Debug.Print(.Name)
                 End With
 
                 For J As Integer = 1 To H.Count(I)

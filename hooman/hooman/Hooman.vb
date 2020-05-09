@@ -35,7 +35,7 @@ Public Class Hooman
 
     End Property
 
-    Default ReadOnly Property Items(Name As String, ParamArray Indexes() As Integer) As String
+    Default ReadOnly Property Items(Name As String, ParamArray Indexes() As Integer) As Object
 
         Get
 
@@ -58,7 +58,11 @@ Public Class Hooman
 
             Next I
 
-            Return L(Name).ToString
+            If TypeOf L(Name) Is HoomanLimb Then
+                Return DirectCast(L(Name), HoomanLimb).Value.ToString
+            Else
+                Return L(Name)
+            End If
 
         End Get
 
@@ -71,7 +75,11 @@ Public Class Hooman
             Dim I As Integer
             Dim L As HoomanLimbs
 
-            L = DirectCast(PropLimbs.Items(FirstIndex).Value, HoomanLimbs)
+            If TypeOf PropLimbs.Items(FirstIndex).Value Is HoomanLimbs Then
+                L = DirectCast(PropLimbs.Items(FirstIndex).Value, HoomanLimbs)
+            Else
+                Return PropLimbs.Items(FirstIndex)
+            End If
 
             For I = 0 To UBound(Indexes)
 
