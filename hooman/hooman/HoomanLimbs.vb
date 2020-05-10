@@ -100,6 +100,17 @@ Public Class HoomanLimbs
 
     End Function
 
+    Public Function GetElementByName(Name As String) As HoomanLimb
+
+        If CollItem.ContainsKey(Name) Then
+            Return CollItem(Name)
+        Else
+            Return Nothing
+        End If
+
+    End Function
+
+
     Public Sub Clear()
 
         CollItem.Clear()

@@ -289,7 +289,7 @@ Public Class Hooman
                                 End If
 
                                 If sRow.Substring(0, 4 * (CurrIndentation + 1)).Trim <> "" Then
-                                    Throw New Exception("Wrong indentation at row " + Str(Row))
+                                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
                                 End If
 
                                 sRow = sRow.Substring(4 * (CurrIndentation + 1))
@@ -318,12 +318,6 @@ Public Class Hooman
 
                             Loop
 
-                            Dim L As HoomanLimbs = PropLimbs
-
-                            For I = 1 To ParentLevel - 1
-                                L = DirectCast(L(Indexes(I)), HoomanLimbs)
-                            Next
-
                             If QuoteType.ToLower = "hooman" Then
 
                                 Indexes(ParentLevel) = ParentName
@@ -331,7 +325,14 @@ Public Class Hooman
 
                             Else
 
+                                Dim L As HoomanLimbs = PropLimbs
+
+                                For I = 1 To ParentLevel - 1
+                                    L = DirectCast(L(Indexes(I)), HoomanLimbs)
+                                Next
+
                                 L(ParentName) = QuoteBuffer
+                                L.GetElementByName(ParentName).QuoteType = QuoteType
 
                             End If
 
@@ -365,6 +366,10 @@ Public Class Hooman
 
                                 L(Name) = Value
 
+                            Else
+
+                                Throw New Exception("Wrong sintax at row " + Str(Row + 1))
+
                             End If
 
                         End If
@@ -377,7 +382,7 @@ Public Class Hooman
 
                 Else
 
-                    Throw New Exception("Indentation not allowed at row " + Str(Row))
+                    Throw New Exception("Indentation not allowed at row " + Str(Row + 1))
 
                 End If
 

@@ -20,5 +20,6 @@ Public Class HoomanLimb
 
     Public Name As String = ""
     Public Value As Object = Nothing
+    Public QuoteType As String
 
 End Class
