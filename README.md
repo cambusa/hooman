@@ -1,6 +1,6 @@
 # Hooman v1.0 
 
-__Specification for a new human-writable configuration language - (cc) 2020 Rodolfo Calzetti__
+__Specification for a new human-writable configuration language - (CC0) 2020 Rodolfo Calzetti__
 
 
 ## Rules
