@@ -19,6 +19,8 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ```<--```: file include 
 
+```@```: reset branch
+
 ```+```: increment by one (of a sibling key)
 
 ```#```: numerical index in the syntactic structure 
