@@ -23,13 +23,15 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 
 ```#```: numerical index in the syntactic structure 
 
+```!```: mandatory in the syntactic structure 
+
 ```==>```: entail in the syntactic rules 
 
 ---
 
 ## Todo
 
-- Reader for file Hooman
+- Reader for file Hooman (the current vb.net project is to be completed)
 - Editor for file Hooman (with intellisense deduced from the syntactic rules)
 
 ---
@@ -128,8 +130,8 @@ hooman
     version 1
     syntax
         structure
-            data
-                name
+            data !
+                name !
                 address
                     city
 
