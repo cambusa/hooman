@@ -5,13 +5,11 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 
 ## Rules
 
-```New line + Indentation```: belonging
-
 ```Four leading spaces```: a tabular key
 
-```Spaces and tabs after a variable```: assignement
+```Spaces and tabs after a variable```: simple assignement
 
-```+```: increment by one (of a sibling key)
+```New line + Indentation```: complex assignement
 
 ```<<   >>```: text
 
@@ -20,6 +18,8 @@ __Specification for a new human-writable configuration language - (cc) 2020 Rodo
 ```***```: remark
 
 ```<--```: file include 
+
+```+```: increment by one (of a sibling key)
 
 ```#```: numerical index in the syntactic structure 
 
