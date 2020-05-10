@@ -21,11 +21,11 @@ Imports System.Text.RegularExpressions
 
 Public Class Hooman
 
+    Public ErrDescription As String = ""
+    Public ConfigDirectory As String = ""
+    Public OnErrorRaise As Boolean = False
+
     Dim PropLimbs As HoomanLimbs = New HoomanLimbs
-    Dim PropErrDescription As String = ""
-
-    Dim PropDirectory As String = ""
-
 
     ReadOnly Property Limbs() As HoomanLimbs
 
@@ -142,19 +142,57 @@ Public Class Hooman
 
         Try
 
-            Dim PosBar As Integer = PathName.LastIndexOf("\")
-            If PosBar > 0 Then
-                PropDirectory = PathName.Substring(0, PosBar)
+            If ConfigDirectory = "" Then
+
+                Dim PosBar As Integer = PathName.LastIndexOf("\")
+                If PosBar >= 0 Then
+                    ConfigDirectory = PathName.Substring(0, PosBar + 1)
+                End If
+
             Else
-                PropDirectory = ""
+
+                If Not ConfigDirectory.EndsWith("\") Then
+                    ConfigDirectory += "\"
+                End If
+
+                If PathName.Substring(0, 2) <> "\\" And
+                   PathName.Substring(1, 1) <> ":" Then
+
+                    PathName = ConfigDirectory + PathName
+
+                End If
+
             End If
 
             Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
             Dim sBuffer As String = System.Text.Encoding.Default.GetString(bBuffer)
+
+            Return ParseHooman(sBuffer)
+
+        Catch ex As Exception
+
+            ErrDescription = ex.Message
+
+            If OnErrorRaise Then
+
+                Throw New Exception(ErrDescription)
+
+            End If
+
+            Return False
+
+        End Try
+
+    End Function
+
+    Public Function ParseHooman(sBuffer As String) As Boolean
+
+        Try
+
             Dim MatchRows As MatchCollection
             Dim Indexes As String()
 
-            PropErrDescription = ""
+            ErrDescription = ""
             PropLimbs.Clear()
 
             ReDim Indexes(1000)
@@ -167,7 +205,13 @@ Public Class Hooman
 
         Catch ex As Exception
 
-            PropErrDescription = ex.Message
+            ErrDescription = ex.Message
+
+            If OnErrorRaise Then
+
+                Throw New Exception(ErrDescription)
+
+            End If
 
             Return False
 
@@ -238,19 +282,26 @@ Public Class Hooman
                             Do
 
                                 Row += 1
-                                sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "").Trim
+                                sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "")
 
-                                If sRow = QuoteType + ">>" Then
-
+                                If sRow.Trim = QuoteType + ">>" Then
                                     Exit Do
+                                End If
 
-                                ElseIf sRow.StartsWith("<--") Then
+                                If sRow.Substring(0, 4 * (CurrIndentation + 1)).Trim <> "" Then
+                                    Throw New Exception("Wrong indentation at row " + Str(Row))
+                                End If
 
-                                    sRow = sRow.Substring(3).Trim
+                                sRow = sRow.Substring(4 * (CurrIndentation + 1))
 
-                                    If sRow.Substring(0) <> "\" And sRow.Substring(1) <> ":" Then
+                                If sRow.Trim.StartsWith("<--") Then
 
-                                        sRow = PropDirectory + "\" + sRow
+                                    sRow = sRow.Trim.Substring(3).Trim
+
+                                    If sRow.Substring(0, 2) <> "\\" And
+                                       sRow.Substring(1, 1) <> ":" Then
+
+                                        sRow = ConfigDirectory + sRow
 
                                     End If
 
@@ -326,7 +377,7 @@ Public Class Hooman
 
                 Else
 
-                    Throw New Exception("Indentation not allowed")
+                    Throw New Exception("Indentation not allowed at row " + Str(Row))
 
                 End If
 

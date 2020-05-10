@@ -6,6 +6,7 @@ Public Class Form1
 
         Dim H As hooman.Hooman = New hooman.Hooman
 
+        H.OnErrorRaise = True
         H.LoadHooman("C:\Sviluppo\hooman\test1.txt")
 
         For I As Integer = 1 To H.Count

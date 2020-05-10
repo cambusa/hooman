@@ -12,3 +12,17 @@ C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.vbproj.GenerateResource.Cache
 C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.exe
 C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.xml
 C:\Sviluppo\hooman\HoomanTest\obj\Debug\HoomanTest.pdb
+C:\Github\hooman\HoomanTest\bin\Debug\HoomanTest.exe.config
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.exe
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.xml
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.pdb
+C:\Github\hooman\HoomanTest\bin\Debug\HoomanTest.exe
+C:\Github\hooman\HoomanTest\bin\Debug\HoomanTest.pdb
+C:\Github\hooman\HoomanTest\bin\Debug\HoomanTest.xml
+C:\Github\hooman\HoomanTest\bin\Debug\hooman.dll
+C:\Github\hooman\HoomanTest\bin\Debug\hooman.pdb
+C:\Github\hooman\HoomanTest\bin\Debug\hooman.xml
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.vbprojResolveAssemblyReference.cache
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.Form1.resources
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.Resources.resources
+C:\Github\hooman\HoomanTest\obj\Debug\HoomanTest.vbproj.GenerateResource.Cache
