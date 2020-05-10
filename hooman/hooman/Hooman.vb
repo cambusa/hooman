@@ -364,7 +364,17 @@ Public Class Hooman
 
                                 Next
 
-                                L(Name) = Value
+                                If TypeOf L(Name) Is HoomanLimbs Then
+
+                                    If Value = "@@@" Then
+                                        L(Name) = ""
+                                    End If
+
+                                Else
+
+                                    L(Name) = Value
+
+                                End If
 
                             Else
 
