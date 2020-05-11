@@ -7,7 +7,7 @@ Public Class Form1
         Dim H As hooman.Hooman = New hooman.Hooman
 
         H.OnErrorRaise = True
-        H.LoadHooman("C:\Sviluppo\hooman\test1.txt")
+        H.LoadHooman("c:\github\hooman\test1.txt")
 
         For I As Integer = 1 To H.Count
 
@@ -60,6 +60,24 @@ Public Class Form1
                                         End With
 
                                     Else
+
+                                        With H(I, J, K, M)
+                                            Debug.Print("      " + .Name)
+                                        End With
+
+                                        For N As Integer = 1 To H.Count(I, J, K, M)
+
+                                            If H.Count(I, J, K, M, N) = -1 Then
+
+                                                With H(I, J, K, M, N)
+                                                    Debug.Print("        " + .Name + ":" + .Value)
+                                                End With
+
+                                            Else
+
+                                            End If
+
+                                        Next
 
                                     End If
 

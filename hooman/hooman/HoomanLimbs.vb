@@ -50,12 +50,14 @@ Public Class HoomanLimbs
 
                 Dim ObjLimb As HoomanLimb = New HoomanLimb
 
+                LastID += 1
+
+                ObjLimb.Index = LastID
                 ObjLimb.Name = Name
                 ObjLimb.Value = value
 
                 CollItem.Add(Name, ObjLimb)
 
-                LastID += 1
                 CollIndex.Add(LastID, Name)
 
             End If

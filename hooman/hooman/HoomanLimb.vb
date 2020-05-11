@@ -18,6 +18,7 @@
 
 Public Class HoomanLimb
 
+    Public Index As Integer = 0
     Public Name As String = ""
     Public Value As Object = Nothing
     Public QuoteType As String

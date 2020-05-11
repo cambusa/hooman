@@ -1,6 +1,10 @@
 hooman
     version 1
 
+hooman
+    version 2
+    versione 3
+
 extract
     data
         code
@@ -8,9 +12,22 @@ extract
             type char
             length 10
         description
-            offset 11
+            offset2 11
             type char
             length 50
+    matrix
+        1
+            0 
+                id Pippo
+            + 
+                id Pippo2
+        +
+            0 id0
+            + id1
+            + id2
+        +
+            0
+                id Pluto
          
 transform
     *** Script follows
@@ -23,9 +40,20 @@ subhooman
     <<hooman
         <-- sample.txt
     hooman>>
+
+subhooman
+    name
+        surname Giggino
+        nickname uuu
+
+    indirizzo @
+    indirizzo
+        address penny
     
 load
     *** other stuffs
     <<
         Scrivo qualche cosa
+         e anche altro
+             e altro ancora
     >>

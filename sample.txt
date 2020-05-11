@@ -1,6 +1,7 @@
 name
     surname     Calogero
     first_name Pippo
+    nickname    Jo
     
 indirizzo
     city milano

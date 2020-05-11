@@ -338,14 +338,25 @@ Public Class Hooman
 
                         Else
 
-                            MatchArgs = Regex.Match(sRow, "(\w+)( *.*)", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+                            MatchArgs = Regex.Match(sRow + " ", "(\w+|\+) +(.*)", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                             If MatchArgs.Success Then
 
                                 Dim NameValue As GroupCollection = MatchArgs.Groups
 
                                 Name = NameValue(1).Value
-                                Value = NameValue(2).Value.TrimStart
+                                Value = NameValue(2).Value.Trim
+
+                                If Name = "+" Then
+                                    MatchArgs = Regex.Match(Indexes(ParentLevel + 1), "\d+")
+                                    If MatchArgs.Success Then
+                                        Name = Str(Val(Indexes(ParentLevel + 1)) + 1).Trim
+                                    Else
+                                        Throw New Exception("The plus cannot be resolved at row " + Str(Row + 1))
+                                    End If
+                                End If
+
+                                Indexes(ParentLevel + 1) = Name
 
                                 Dim L As HoomanLimbs = PropLimbs
 
@@ -366,13 +377,15 @@ Public Class Hooman
 
                                 If TypeOf L(Name) Is HoomanLimbs Then
 
-                                    If Value = "@" Then
+                                    If Value = "@" And Indexes(1).ToLower <> "hooman" Then
                                         L(Name) = ""
                                     End If
 
                                 Else
 
-                                    L(Name) = Value
+                                    If Not L.Exists(Name) OrElse Indexes(1) Is Nothing OrElse Indexes(1).ToLower <> "hooman" Then
+                                        L(Name) = Value
+                                    End If
 
                                 End If
 
@@ -403,6 +416,8 @@ Public Class Hooman
             End If
 
         Loop
+
+        Indexes(ParentLevel + 1) = ""
 
     End Sub
 
