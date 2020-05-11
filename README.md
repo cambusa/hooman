@@ -220,7 +220,7 @@ worksheet
         1
             color white
             cols
-                1
+                0
                     label Amount
                     type float
                     value 1234.56
