@@ -23,8 +23,6 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ```+```: increment by one (of a sibling key)
 
-```#```: numerical index in the syntactic structure 
-
 ```!```: mandatory in the syntactic structure 
 
 ```==>```: entail in the syntactic rules 
@@ -84,6 +82,25 @@ document
     
 ```    
     
+---
+
+_Example with inclusion and branch redefinition_
+
+```    
+hooman
+    version 1
+
+document
+    <<hooman
+        <-- include.txt
+    hooman>>
+
+document @
+document
+    new_structure
+
+```    
+    
 
 ---
 
@@ -139,10 +156,11 @@ hooman
 
             worksheet
                 rows 
-                    #
+                    *** starting index
+                    1
                         color
                         cols
-                            #
+                            0
                                 label
                                 type
                                 value
