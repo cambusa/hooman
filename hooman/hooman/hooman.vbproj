@@ -67,7 +67,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hooman.vb" />
+    <Compile Include="HoomanParser.vb" />
     <Compile Include="HoomanLimb.vb" />
     <Compile Include="HoomanLimbs.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

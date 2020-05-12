@@ -4,7 +4,7 @@ Public Class Form1
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
-        Dim H As hooman.Hooman = New hooman.Hooman
+        Dim H As hooman.HoomanParser = New hooman.HoomanParser
 
         H.OnErrorRaise = True
         H.LoadHooman("c:\github\hooman\test1.txt")

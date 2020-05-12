@@ -22,5 +22,6 @@ Public Class HoomanLimb
     Public Name As String = ""
     Public Value As Object = Nothing
     Public QuoteType As String
+    Friend Mandatory As Boolean
 
 End Class

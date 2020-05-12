@@ -19,7 +19,7 @@
 Imports System.IO
 Imports System.Text.RegularExpressions
 
-Public Class Hooman
+Public Class HoomanParser
 
     Public ErrDescription As String = ""
     Public ConfigDirectory As String = ""
@@ -347,6 +347,10 @@ Public Class Hooman
                                 Name = NameValue(1).Value
                                 Value = NameValue(2).Value.Trim
 
+                                '----------------------
+                                ' Manage autoincrement
+                                '----------------------
+
                                 If Name = "+" Then
                                     MatchArgs = Regex.Match(Indexes(ParentLevel + 1), "\d+")
                                     If MatchArgs.Success Then
@@ -357,6 +361,10 @@ Public Class Hooman
                                 End If
 
                                 Indexes(ParentLevel + 1) = Name
+
+                                '--------------------
+                                ' Manage assignement
+                                '--------------------
 
                                 Dim L As HoomanLimbs = PropLimbs
 
@@ -377,14 +385,35 @@ Public Class Hooman
 
                                 If TypeOf L(Name) Is HoomanLimbs Then
 
-                                    If Value = "@" And Indexes(1).ToLower <> "hooman" Then
+                                    '----------------------------------------------
+                                    ' It's possible to reset only not-hooman branch
+                                    '----------------------------------------------
+
+                                    If Value = "@" And Not Indexes(1).ToLower = "hooman" Then
                                         L(Name) = ""
                                     End If
 
                                 Else
 
-                                    If Not L.Exists(Name) OrElse Indexes(1) Is Nothing OrElse Indexes(1).ToLower <> "hooman" Then
+                                    If Indexes(1).ToLower = "hooman" AndAlso
+                                           Indexes(2) IsNot Nothing AndAlso
+                                           Indexes(2).ToLower = "sintax" Then
+
+                                        If Not L.Exists(Name) Then
+
+                                            If Value = "!" Then
+                                                L(Name) = ""
+                                                L.GetElementByName(Name).Mandatory = True
+                                            Else
+                                                L(Name) = Value
+                                            End If
+
+                                        End If
+
+                                    Else
+
                                         L(Name) = Value
+
                                     End If
 
                                 End If
