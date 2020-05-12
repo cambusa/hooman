@@ -36,6 +36,20 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ---
 
+## Why Hooman?
+
+```
+cat_says
+    <<
+        Look, i'm a hooman, 
+        get off da counter, 
+        don't eat mai fud, 
+        dur dur dur dur
+    >>
+```
+
+---
+
 _Example for ETL configuration_
 
 ```    
