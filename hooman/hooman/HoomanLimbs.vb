@@ -24,7 +24,7 @@ Public Class HoomanLimbs
     Dim CollIndex As Dictionary(Of Integer, String) = New Dictionary(Of Integer, String)
     Dim LastID As Integer = 0
 
-    Default Public Property Items(Name As String) As Object
+    Default Public Property Item(Name As String) As Object
 
         Get
 
@@ -34,7 +34,7 @@ Public Class HoomanLimbs
 
             Else
 
-                Return ""
+                Return Nothing
 
             End If
 
@@ -66,7 +66,7 @@ Public Class HoomanLimbs
 
     End Property
 
-    Default Public ReadOnly Property Items(Index As Integer) As HoomanLimb
+    Default Public ReadOnly Property Item(Index As Integer) As HoomanLimb
 
         Get
 
@@ -77,6 +77,42 @@ Public Class HoomanLimbs
             Else
 
                 Return Nothing
+
+            End If
+
+        End Get
+
+    End Property
+
+    Default Public ReadOnly Property Item(Name As String, DefaultValue As String) As String
+
+        Get
+
+            If CollItem.ContainsKey(Name) Then
+
+                Return DirectCast(CollItem(Name).Value, String)
+
+            Else
+
+                Return DefaultValue
+
+            End If
+
+        End Get
+
+    End Property
+
+    Default Public ReadOnly Property Item(Name As String, DefaultValue As HoomanLimbs) As HoomanLimbs
+
+        Get
+
+            If CollItem.ContainsKey(Name) Then
+
+                Return DirectCast(CollItem(Name).Value, HoomanLimbs)
+
+            Else
+
+                Return DefaultValue
 
             End If
 

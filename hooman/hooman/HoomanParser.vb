@@ -35,7 +35,7 @@ Public Class HoomanParser
 
     End Property
 
-    Default ReadOnly Property Items(Name As String, ParamArray Indexes() As Integer) As Object
+    Default ReadOnly Property Item(Name As String, ParamArray Indexes() As Integer) As Object
 
         Get
 
@@ -46,9 +46,9 @@ Public Class HoomanParser
 
             For I = 0 To UBound(Indexes)
 
-                If TypeOf L.Items(Indexes(I)).Value Is HoomanLimbs Then
+                If TypeOf L.Item(Indexes(I)).Value Is HoomanLimbs Then
 
-                    L = DirectCast(L.Items(Indexes(I)).Value, HoomanLimbs)
+                    L = DirectCast(L.Item(Indexes(I)).Value, HoomanLimbs)
 
                 Else
 
@@ -68,30 +68,30 @@ Public Class HoomanParser
 
     End Property
 
-    Default Public ReadOnly Property Items(FirstIndex As Integer, ParamArray Indexes() As Integer) As Object
+    Default Public ReadOnly Property Item(FirstIndex As Integer, ParamArray Indexes() As Integer) As Object
 
         Get
 
             Dim I As Integer
             Dim L As HoomanLimbs
 
-            If TypeOf PropLimbs.Items(FirstIndex).Value Is HoomanLimbs Then
-                L = DirectCast(PropLimbs.Items(FirstIndex).Value, HoomanLimbs)
+            If TypeOf PropLimbs.Item(FirstIndex).Value Is HoomanLimbs Then
+                L = DirectCast(PropLimbs.Item(FirstIndex).Value, HoomanLimbs)
             Else
-                Return PropLimbs.Items(FirstIndex)
+                Return PropLimbs.Item(FirstIndex)
             End If
 
             For I = 0 To UBound(Indexes)
 
-                If TypeOf L.Items(Indexes(I)).Value Is HoomanLimbs Then
+                If TypeOf L.Item(Indexes(I)).Value Is HoomanLimbs Then
 
-                    L = DirectCast(L.Items(Indexes(I)).Value, HoomanLimbs)
+                    L = DirectCast(L.Item(Indexes(I)).Value, HoomanLimbs)
 
                 Else
 
                     If I = UBound(Indexes) Then
 
-                        Return L.Items(Indexes(I))
+                        Return L.Item(Indexes(I))
 
                     Else
 
@@ -118,9 +118,9 @@ Public Class HoomanParser
 
         For I = 0 To UBound(Indexes)
 
-            If TypeOf L.Items(Indexes(I)).Value Is HoomanLimbs Then
+            If TypeOf L.Item(Indexes(I)).Value Is HoomanLimbs Then
 
-                L = DirectCast(L.Items(Indexes(I)).Value, HoomanLimbs)
+                L = DirectCast(L.Item(Indexes(I)).Value, HoomanLimbs)
 
             Else
 
