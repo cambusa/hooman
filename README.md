@@ -32,8 +32,7 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ## Todo
 
-- Reader for file Hooman (the current vb.net project is to be completed)
-- Editor for file Hooman (with intellisense deduced from the syntactic rules)
+- Hooman reader: application of the syntactic rules to be implemented
 
 ---
 
