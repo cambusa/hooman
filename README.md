@@ -26,6 +26,10 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ```!```: mandatory in the syntactic structure 
 
+```*```: jollyname in the syntactic structure (for numerical/associative index)
+
+```...```: iterable branch in the syntactic structure (for recursion) 
+
 ```==>```: entail in the syntactic rules 
 
 ---
@@ -153,14 +157,16 @@ hooman
                 name !
                 address
                     city
+                subdata ...
+                    link
+                        subdata
 
             worksheet
                 rows 
-                    *** starting index
-                    1
+                    rowindex *
                         color
                         cols
-                            0
+                            colindex *
                                 label
                                 type
                                 value
