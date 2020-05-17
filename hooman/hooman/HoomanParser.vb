@@ -28,6 +28,9 @@ Public Class HoomanParser
     Dim PropLimbs As HoomanLimbs = New HoomanLimbs
     Dim ListPaths As String = ""
 
+    Dim ArrayMandatories As String()
+    Dim MaxMandatory As Integer
+
     ReadOnly Property Limbs() As HoomanLimbs
 
         Get
@@ -192,6 +195,9 @@ Public Class HoomanParser
 
             Dim MatchRows As MatchCollection
             Dim Indexes As String()
+
+            MaxMandatory = 0
+            ReDim ArrayMandatories(100)
 
             ErrDescription = ""
             PropLimbs.Clear()
@@ -427,16 +433,37 @@ Public Class HoomanParser
                                         If Not L.Exists(Name) Then
 
                                             If Value = "!" Then
+
                                                 L(Name) = ""
                                                 L.GetElementByName(Name).Mandatory = True
+                                                Dim MandatoryPath As String = ""
+
+                                                For I = 4 To ParentLevel
+                                                    MandatoryPath += Indexes(I).ToLower + "\"
+                                                Next
+                                                MandatoryPath += Name.ToLower
+
+                                                MaxMandatory += 1
+                                                If MaxMandatory > UBound(ArrayMandatories) Then
+                                                    ReDim Preserve ArrayMandatories(MaxMandatory + 100)
+                                                End If
+
+                                                ArrayMandatories(MaxMandatory) = MandatoryPath
+
                                             ElseIf Value = "*" Then
+
                                                 L(Name) = ""
                                                 L.GetElementByName(Name).JollyName = True
+
                                             ElseIf Value = "..." Then
+
                                                 L(Name) = ""
                                                 L.GetElementByName(Name).Iterable = True
+
                                             Else
+
                                                 L(Name) = Value
+
                                             End If
 
                                         End If
@@ -498,11 +525,63 @@ Public Class HoomanParser
 
         For I = 0 To Names.Count - 1
 
-            L = DirectCast(L(Names(I)), HoomanLimbs)
+            If L.Exists(Names(I)) Then
+
+                If TypeOf L.Item(Names(I)) Is HoomanLimbs Then
+
+                    L = DirectCast(L(Names(I)), HoomanLimbs)
+
+                Else
+
+                    L = Nothing
+                    Exit For
+
+                End If
+
+            Else
+
+                L = Nothing
+                Exit For
+
+            End If
 
         Next
 
         Return L
+
+    End Function
+
+    Public Function PathExists(ParamArray Names As String()) As Boolean
+
+        Dim L As HoomanLimbs = PropLimbs
+        Dim I As Integer
+        Dim E As Boolean = True
+
+        For I = 0 To Names.Count - 1
+
+            If L.Exists(Names(I)) Then
+
+                If TypeOf L.Item(Names(I)) Is HoomanLimbs Then
+
+                    L = DirectCast(L(Names(I)), HoomanLimbs)
+
+                Else
+
+                    E = (I = Names.Count - 1)
+                    Exit For
+
+                End If
+
+            Else
+
+                E = False
+                Exit For
+
+            End If
+
+        Next
+
+        Return E
 
     End Function
 
@@ -516,6 +595,7 @@ Public Class HoomanParser
 
             BuilderPaths(S, "")
             SintaxAnalisys(PropLimbs, "")
+            MandatoryChecks()
 
         End If
 
@@ -613,6 +693,25 @@ Public Class HoomanParser
                 If ListPaths.IndexOf(P) = -1 Then
                     ListPaths += P
                 End If
+
+            End If
+
+        Next
+
+    End Sub
+
+    Private Sub MandatoryChecks()
+
+        Dim I As Integer
+        Dim V As String()
+
+        For I = 1 To MaxMandatory
+
+            V = Split(ArrayMandatories(I), "\")
+
+            If Not PathExists(V) Then
+
+                Throw New Exception("Path [" + ArrayMandatories(I) + "] is mandatory")
 
             End If
 

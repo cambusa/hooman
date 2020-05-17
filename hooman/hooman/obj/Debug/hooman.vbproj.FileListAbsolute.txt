@@ -14,4 +14,3 @@ C:\Github\hooman\hooman\hooman\obj\Debug\hooman.vbproj.GenerateResource.Cache
 C:\Github\hooman\hooman\hooman\obj\Debug\hooman.dll
 C:\Github\hooman\hooman\hooman\obj\Debug\hooman.xml
 C:\Github\hooman\hooman\hooman\obj\Debug\hooman.pdb
-C:\Github\hooman\hooman\hooman\obj\Debug\hooman.vbprojResolveAssemblyReference.cache

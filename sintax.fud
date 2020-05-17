@@ -11,7 +11,8 @@ hooman
                         type
                         value 
                 matrix
-
+                    rows !
+                        cols
             data
                 link
                     subdata ...
@@ -34,6 +35,7 @@ hooman
             
         
 extract
+    mandatorio
     data
         0
             name codice
@@ -44,6 +46,7 @@ extract
             type float
             value Pippo
     matrix
+        rows
  
 data
     link
