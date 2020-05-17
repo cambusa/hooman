@@ -3,11 +3,22 @@ hooman
     sintax
         structure
             extract
+                mandatorio !
+                    name
                 data
-                    codice
+                    id *
+                        name
                         type
                         value 
                 matrix
+
+            data
+                link
+                    subdata ...
+                        name
+                        link
+                            subdata
+                            
         rules
             1
                 ==> 
@@ -24,8 +35,23 @@ hooman
         
 extract
     data
-        codice
+        0
+            name codice
             type float
             value Pippo
-    atrix
-    
+        +
+            name descrizione
+            type float
+            value Pippo
+    matrix
+ 
+data
+    link
+        subdata
+            name Morena
+            link
+                subdata
+                    name Serafino
+                    link
+                        subdata
+                            name Giorgio

@@ -429,6 +429,12 @@ Public Class HoomanParser
                                             If Value = "!" Then
                                                 L(Name) = ""
                                                 L.GetElementByName(Name).Mandatory = True
+                                            ElseIf Value = "*" Then
+                                                L(Name) = ""
+                                                L.GetElementByName(Name).JollyName = True
+                                            ElseIf Value = "..." Then
+                                                L(Name) = ""
+                                                L.GetElementByName(Name).Iterable = True
                                             Else
                                                 L(Name) = Value
                                             End If
@@ -520,6 +526,9 @@ Public Class HoomanParser
         Dim S As HoomanLimbs
         Dim I As Integer
         Dim P As String
+        Dim PStar As String
+        Dim PDots As String
+        Dim PosDots As Integer
 
         For I = 1 To L.Count
 
@@ -529,21 +538,39 @@ Public Class HoomanParser
 
                 If S.Name.ToLower <> "hooman" Then
 
-                    P = pathlevel + S.Name + "\"
+                    P = pathlevel + S.Name.ToLower + "\"
+                    PStar = pathlevel + "*\"
 
-                    If ListPaths.IndexOf("|" + P) = -1 Then
+                    PosDots = pathlevel.IndexOf("[" + S.Name.ToLower + "...\")
+                    If PosDots >= 0 Then
+                        PDots = pathlevel.Substring(0, PosDots) + "[" + S.Name.ToLower + "...\"
+                    Else
+                        PDots = pathlevel + "[" + S.Name.ToLower + "...\"
+                    End If
+
+                    If ListPaths.IndexOf("|" + PDots) >= 0 Then
+
+                        SintaxAnalisys(S, PDots)
+
+                    ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
+
+                        SintaxAnalisys(S, P)
+
+                    ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
+
+                        SintaxAnalisys(S, PStar)
+
+                    Else
 
                         Throw New Exception("Path [" + P + "] not allowed")
 
                     End If
 
-                    SintaxAnalisys(S, P)
-
                 End If
 
             Else
 
-                P = pathlevel + L(I).Name + "\"
+                P = pathlevel + L(I).Name.ToLower + "\"
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
@@ -568,12 +595,20 @@ Public Class HoomanParser
             If TypeOf L(I).Value Is HoomanLimbs Then
 
                 S = DirectCast(L.Item(I).Value, HoomanLimbs)
-                P = pathlevel + S.Name.ToLower + "\"
+
+                If L.Item(I).JollyName Then
+                    P = pathlevel + "*\"
+                ElseIf L.Item(I).Iterable Then
+                    P = pathlevel + "[" + S.Name.ToLower + "...\"
+                Else
+                    P = pathlevel + S.Name.ToLower + "\"
+                End If
+
                 BuilderPaths(S, P)
 
             Else
 
-                P = "|" + pathlevel + L(I).Name + "\"
+                P = "|" + pathlevel + L(I).Name.ToLower + "\"
 
                 If ListPaths.IndexOf(P) = -1 Then
                     ListPaths += P
