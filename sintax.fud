@@ -1,0 +1,31 @@
+hooman
+    version 1
+    sintax
+        structure
+            extract
+                data
+                    codice
+                        type
+                        value 
+                matrix
+        rules
+            1
+                ==> 
+                type (char|float|date)
+            +
+                type float
+                ==>
+                value \d+(\.\d+)?
+            +
+                type date
+                ==>
+                value \d{8}
+            
+        
+extract
+    data
+        codice
+            type float
+            value Pippo
+    atrix
+    

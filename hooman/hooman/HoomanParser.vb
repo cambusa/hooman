@@ -26,6 +26,7 @@ Public Class HoomanParser
     Public OnErrorRaise As Boolean = False
 
     Dim PropLimbs As HoomanLimbs = New HoomanLimbs
+    Dim ListPaths As String = ""
 
     ReadOnly Property Limbs() As HoomanLimbs
 
@@ -201,6 +202,12 @@ Public Class HoomanParser
 
             HoomanAnalisys(MatchRows, 0, "", 0, -1, Indexes)
 
+            '-----------------
+            ' Sintax checking
+            '-----------------
+
+            SintaxChecking()
+
             Return True
 
         Catch ex As Exception
@@ -230,6 +237,7 @@ Public Class HoomanParser
         Dim I As Integer
         Dim QuoteType As String
         Dim QuoteBuffer As String
+        Dim FlagAzione As Boolean = False
 
         Do While (Row < MatchRows.Count)
 
@@ -333,6 +341,23 @@ Public Class HoomanParser
 
                                 L(ParentName) = QuoteBuffer
                                 L.GetElementByName(ParentName).QuoteType = QuoteType
+
+                            End If
+
+                        ElseIf sRow = "==>" Then
+
+                            If Indexes(1) IsNot Nothing AndAlso
+                               Indexes(1).ToLower = "hooman" AndAlso
+                               Indexes(2) IsNot Nothing AndAlso
+                               Indexes(2).ToLower = "sintax" AndAlso
+                               Indexes(3) IsNot Nothing AndAlso
+                               Indexes(3).ToLower = "rules" Then
+
+                                FlagAzione = True
+
+                            Else
+
+                                Throw New Exception("Not allowed outside [hooman\sintax\rules] " + Str(Row + 1))
 
                             End If
 
@@ -457,6 +482,106 @@ Public Class HoomanParser
         MatchRows = Regex.Matches(sBuffer, "^.*$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
         HoomanAnalisys(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
+
+    End Sub
+
+    Public Function GetLimbs(ParamArray Names As String()) As HoomanLimbs
+
+        Dim L As HoomanLimbs = PropLimbs
+        Dim I As Integer
+
+        For I = 0 To Names.Count - 1
+
+            L = DirectCast(L(Names(I)), HoomanLimbs)
+
+        Next
+
+        Return L
+
+    End Function
+
+    Private Sub SintaxChecking()
+
+        Dim S As HoomanLimbs = Me.GetLimbs("hooman", "sintax", "structure")
+
+        ListPaths = ""
+
+        If S IsNot Nothing Then
+
+            BuilderPaths(S, "")
+            SintaxAnalisys(PropLimbs, "")
+
+        End If
+
+    End Sub
+
+    Private Sub SintaxAnalisys(L As HoomanLimbs, pathlevel As String)
+
+        Dim S As HoomanLimbs
+        Dim I As Integer
+        Dim P As String
+
+        For I = 1 To L.Count
+
+            If TypeOf L(I).Value Is HoomanLimbs Then
+
+                S = DirectCast(L.Item(I).Value, HoomanLimbs)
+
+                If S.Name.ToLower <> "hooman" Then
+
+                    P = pathlevel + S.Name + "\"
+
+                    If ListPaths.IndexOf("|" + P) = -1 Then
+
+                        Throw New Exception("Path [" + P + "] not allowed")
+
+                    End If
+
+                    SintaxAnalisys(S, P)
+
+                End If
+
+            Else
+
+                P = pathlevel + L(I).Name + "\"
+
+                If ListPaths.IndexOf("|" + P) = -1 Then
+
+                    Throw New Exception("Path [" + P + "] not allowed")
+
+                End If
+
+            End If
+
+        Next
+
+    End Sub
+
+    Private Sub BuilderPaths(L As HoomanLimbs, pathlevel As String)
+
+        Dim S As HoomanLimbs
+        Dim I As Integer
+        Dim P As String = ""
+
+        For I = 1 To L.Count
+
+            If TypeOf L(I).Value Is HoomanLimbs Then
+
+                S = DirectCast(L.Item(I).Value, HoomanLimbs)
+                P = pathlevel + S.Name.ToLower + "\"
+                BuilderPaths(S, P)
+
+            Else
+
+                P = "|" + pathlevel + L(I).Name + "\"
+
+                If ListPaths.IndexOf(P) = -1 Then
+                    ListPaths += P
+                End If
+
+            End If
+
+        Next
 
     End Sub
 

@@ -7,7 +7,8 @@ Public Class Form1
         Dim H As hooman.HoomanParser = New hooman.HoomanParser
 
         H.OnErrorRaise = True
-        H.LoadHooman("c:\github\hooman\test1.txt")
+        'H.LoadHooman("c:\github\hooman\test1.fud")
+        H.LoadHooman("c:\github\hooman\sintax.fud")
 
         For I As Integer = 1 To H.Count
 
