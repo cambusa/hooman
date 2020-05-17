@@ -36,7 +36,7 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ## Todo
 
-- Hooman reader: application of the syntactic rules to be implemented
+- Hooman parser: syntactic rules management to be implemented
 
 ---
 
