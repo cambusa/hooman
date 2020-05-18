@@ -8,7 +8,7 @@ Public Class Form1
 
         H.OnErrorRaise = True
         'H.LoadHooman("c:\github\hooman\test1.fud")
-        H.LoadHooman("c:\github\hooman\sintax.fud")
+        H.LoadHooman("c:\github\hooman\checked.fud")
 
         For I As Integer = 1 To H.Count
 

@@ -299,20 +299,31 @@ Public Class HoomanParser
                             QuoteType = sRow.Substring(2).Trim
                             QuoteBuffer = ""
 
+                            Dim SaveRow As Integer = Row
+
                             Do
 
                                 Row += 1
+
+                                If Row >= MatchRows.Count Then
+
+                                    Throw New Exception("Guillemots at row " + Str(SaveRow + 1) + " have not a closure")
+
+                                End If
+
                                 sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "")
 
                                 If sRow.Trim = QuoteType + ">>" Then
                                     Exit Do
                                 End If
 
-                                If sRow.Substring(0, 4 * (CurrIndentation + 1)).Trim <> "" Then
+                                If sRow.Length < 4 * (CurrIndentation + 1) AndAlso sRow.Trim = "" Then
+                                    sRow = ""
+                                ElseIf sRow.Length < 4 * (CurrIndentation + 1) OrElse sRow.Substring(0, 4 * (CurrIndentation + 1)).Trim <> "" Then
                                     Throw New Exception("Wrong indentation at row " + Str(Row + 1))
+                                Else
+                                    sRow = sRow.Substring(4 * (CurrIndentation + 1))
                                 End If
-
-                                sRow = sRow.Substring(4 * (CurrIndentation + 1))
 
                                 If sRow.Trim.StartsWith("<--") Then
 
