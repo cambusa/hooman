@@ -70,6 +70,7 @@
     <Compile Include="HoomanParser.vb" />
     <Compile Include="HoomanLimb.vb" />
     <Compile Include="HoomanLimbs.vb" />
+    <Compile Include="HoomanRules.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

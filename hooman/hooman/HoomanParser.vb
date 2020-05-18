@@ -28,6 +28,8 @@ Public Class HoomanParser
     Dim PropLimbs As HoomanLimbs = New HoomanLimbs
     Dim ListPaths As String = ""
 
+    Dim PropRules As New HoomanRules
+
     Dim ArrayMandatories As String()
     Dim MaxMandatory As Integer
 
@@ -201,6 +203,7 @@ Public Class HoomanParser
 
             ErrDescription = ""
             PropLimbs.Clear()
+            PropRules.Clear()
 
             ReDim Indexes(1000)
 
@@ -243,7 +246,9 @@ Public Class HoomanParser
         Dim I As Integer
         Dim QuoteType As String
         Dim QuoteBuffer As String
-        Dim FlagAzione As Boolean = False
+        Dim FlagEntail As Boolean = False
+        Dim FlagRule As Boolean = False
+        Dim ObjRule As HoomanRule = Nothing
 
         Do While (Row < MatchRows.Count)
 
@@ -359,7 +364,7 @@ Public Class HoomanParser
                                Indexes(3) IsNot Nothing AndAlso
                                Indexes(3).ToLower = "rules" Then
 
-                                FlagAzione = True
+                                FlagEntail = True
 
                             Else
 
@@ -430,41 +435,78 @@ Public Class HoomanParser
                                            Indexes(2) IsNot Nothing AndAlso
                                            Indexes(2).ToLower = "sintax" Then
 
-                                        If Not L.Exists(Name) Then
+                                        If Indexes(3) IsNot Nothing AndAlso
+                                           Indexes(3).ToLower = "structure" Then
 
-                                            If Value = "!" Then
+                                            If Not L.Exists(Name) Then
 
-                                                L(Name) = ""
-                                                L.GetElementByName(Name).Mandatory = True
-                                                Dim MandatoryPath As String = ""
+                                                If Value = "!" Then
 
-                                                For I = 4 To ParentLevel
-                                                    MandatoryPath += Indexes(I).ToLower + "\"
-                                                Next
-                                                MandatoryPath += Name.ToLower
+                                                    L(Name) = ""
+                                                    L.GetElementByName(Name).Mandatory = True
+                                                    Dim MandatoryPath As String = ""
 
-                                                MaxMandatory += 1
-                                                If MaxMandatory > UBound(ArrayMandatories) Then
-                                                    ReDim Preserve ArrayMandatories(MaxMandatory + 100)
+                                                    For I = 4 To ParentLevel
+                                                        MandatoryPath += Indexes(I).ToLower + "\"
+                                                    Next
+                                                    MandatoryPath += Name.ToLower
+
+                                                    MaxMandatory += 1
+                                                    If MaxMandatory > UBound(ArrayMandatories) Then
+                                                        ReDim Preserve ArrayMandatories(MaxMandatory + 100)
+                                                    End If
+
+                                                    ArrayMandatories(MaxMandatory) = MandatoryPath
+
+                                                ElseIf Value = "*" Then
+
+                                                    L(Name) = ""
+                                                    L.GetElementByName(Name).JollyName = True
+
+                                                ElseIf Value = "..." Then
+
+                                                    L(Name) = ""
+                                                    L.GetElementByName(Name).Iterable = True
+
+                                                Else
+
+                                                    L(Name) = Value
+
                                                 End If
 
-                                                ArrayMandatories(MaxMandatory) = MandatoryPath
+                                            End If
 
-                                            ElseIf Value = "*" Then
+                                        ElseIf Indexes(3) IsNot Nothing AndAlso
+                                           Indexes(3).ToLower = "rules" Then
 
-                                                L(Name) = ""
-                                                L.GetElementByName(Name).JollyName = True
+                                            L(Name) = Value
 
-                                            ElseIf Value = "..." Then
+                                            If ParentLevel = 4 Then
 
-                                                L(Name) = ""
-                                                L.GetElementByName(Name).Iterable = True
+                                                If Not FlagRule Then
 
-                                            Else
+                                                    ObjRule = PropRules.Add()
+                                                    FlagRule = True
 
-                                                L(Name) = Value
+                                                    'If FlagEntail Then
+                                                    '    ObjRule.AddContext("Default", "True")
+                                                    'End If
+
+                                                End If
+
+                                                If FlagEntail Then
+                                                    ObjRule.AddClause(Name, Value)
+                                                Else
+                                                    ObjRule.AddContext(Name, Value)
+                                                End If
+
+                                                HoomanIndexAdd(Name, ObjRule)
 
                                             End If
+
+                                        Else
+
+                                            L(Name) = Value
 
                                         End If
 
@@ -599,6 +641,14 @@ Public Class HoomanParser
 
         End If
 
+        Dim R As HoomanLimbs = Me.GetLimbs("hooman", "sintax", "rules")
+
+        If R IsNot Nothing Then
+
+            RuleChecks(PropLimbs)
+
+        End If
+
     End Sub
 
     Private Sub SintaxAnalisys(L As HoomanLimbs, pathlevel As String)
@@ -712,6 +762,118 @@ Public Class HoomanParser
             If Not PathExists(V) Then
 
                 Throw New Exception("Path [" + ArrayMandatories(I) + "] is mandatory")
+
+            End If
+
+        Next
+
+    End Sub
+
+    Private Sub RuleChecks(L As HoomanLimbs)
+
+        Dim S As HoomanLimbs = Nothing
+        Dim I As Integer
+        Dim J As Integer
+        Dim ContextLoaded As Boolean = False
+        Dim ContextAssign As Dictionary(Of String, String) = Nothing
+        Dim IdRule As String = ""
+        Dim VlRule As String = ""
+
+        For I = 1 To L.Count
+
+            If TypeOf L(I).Value Is HoomanLimbs Then
+
+                S = DirectCast(L.Item(I).Value, HoomanLimbs)
+
+                If S.Name.ToLower <> "hooman" Then
+
+                    If HoomanIndexGetRules(S.Name) IsNot Nothing Then
+
+                        Throw New Exception("The [" + S.Name + "] variable must be simple")
+
+                    End If
+
+                    RuleChecks(S)
+
+                End If
+
+            Else
+
+                Dim CollRules As Dictionary(Of Integer, HoomanRule) = HoomanIndexGetRules(L(I).Name)
+
+                If CollRules IsNot Nothing Then
+
+                    Dim Id = L(I).Name.ToLower
+                    Dim Vl = DirectCast(L(I).Value, String).ToLower
+
+                    If Not ContextLoaded Then
+
+                        ContextLoaded = True
+
+                        ContextAssign = New Dictionary(Of String, String)
+
+                        For J = 1 To L.Count
+
+                            If TypeOf L(J).Value Is String Then
+
+                                ContextAssign.Add(L(J).Name, DirectCast(L(J).Value, String))
+
+                            End If
+
+                        Next
+
+                    End If
+
+                    For Each kvRule As KeyValuePair(Of Integer, HoomanRule) In CollRules
+
+                        Dim Ok As Boolean = True
+
+                        For Each kvContext As KeyValuePair(Of Integer, HoomanRuleContext) In kvRule.Value.DictioContext
+
+                            IdRule = kvContext.Value.Name.ToLower
+                            VlRule = kvContext.Value.Value.ToLower
+
+                            If IdRule = Id Then
+
+                                If VlRule <> Vl Then
+
+                                    Ok = False
+                                    Exit For
+
+                                End If
+
+                            End If
+
+                        Next
+
+                        If Ok Then
+
+                            '----------------------------
+                            ' Preconditions are verified
+                            '----------------------------
+
+                            For Each kvClause As KeyValuePair(Of Integer, HoomanRuleClause) In kvRule.Value.DictioClause
+
+                                IdRule = kvClause.Value.Name.ToLower
+                                VlRule = kvClause.Value.Pattern.ToLower
+
+                                If IdRule = Id Then
+
+                                    If VlRule <> Vl Then
+
+
+
+                                    End If
+
+                                End If
+
+                            Next
+
+                        End If
+
+                    Next
+
+                End If
 
             End If
 
