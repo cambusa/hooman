@@ -34,12 +34,6 @@ __Specification for a new human-writable configuration language - (CC0) 2020 Rod
 
 ---
 
-## Todo
-
-- Hooman parser: syntactic rules management to be implemented
-
----
-
 _Example for ETL configuration_
 
 ```    
