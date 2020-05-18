@@ -39,12 +39,12 @@ extract
     data
         0
             name codice
-            type float
-            value Pippo
+            type date
+            value 20200101
         +
             name descrizione
             type float
-            value Pippo
+            value 23.78
     matrix
         rows
  

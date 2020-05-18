@@ -204,6 +204,7 @@ Public Class HoomanParser
             ErrDescription = ""
             PropLimbs.Clear()
             PropRules.Clear()
+            HoomanIndexClear()
 
             ReDim Indexes(1000)
 
@@ -488,19 +489,14 @@ Public Class HoomanParser
                                                     ObjRule = PropRules.Add()
                                                     FlagRule = True
 
-                                                    'If FlagEntail Then
-                                                    '    ObjRule.AddContext("Default", "True")
-                                                    'End If
-
                                                 End If
 
                                                 If FlagEntail Then
                                                     ObjRule.AddClause(Name, Value)
+                                                    HoomanIndexAdd(Name, ObjRule)
                                                 Else
                                                     ObjRule.AddContext(Name, Value)
                                                 End If
-
-                                                HoomanIndexAdd(Name, ObjRule)
 
                                             End If
 
@@ -776,8 +772,11 @@ Public Class HoomanParser
         Dim J As Integer
         Dim ContextLoaded As Boolean = False
         Dim ContextAssign As Dictionary(Of String, String) = Nothing
+        Dim Id As String = ""
+        Dim Vl As String = ""
         Dim IdRule As String = ""
         Dim VlRule As String = ""
+        Dim MatchRule As Match = Nothing
 
         For I = 1 To L.Count
 
@@ -803,8 +802,8 @@ Public Class HoomanParser
 
                 If CollRules IsNot Nothing Then
 
-                    Dim Id = L(I).Name.ToLower
-                    Dim Vl = DirectCast(L(I).Value, String).ToLower
+                    Id = L(I).Name.ToLower
+                    Vl = DirectCast(L(I).Value, String).ToLower
 
                     If Not ContextLoaded Then
 
@@ -827,15 +826,18 @@ Public Class HoomanParser
                     For Each kvRule As KeyValuePair(Of Integer, HoomanRule) In CollRules
 
                         Dim Ok As Boolean = True
+                        Dim CondExists As Boolean = (kvRule.Value.DictioContext.Count = 0)
 
                         For Each kvContext As KeyValuePair(Of Integer, HoomanRuleContext) In kvRule.Value.DictioContext
 
                             IdRule = kvContext.Value.Name.ToLower
                             VlRule = kvContext.Value.Value.ToLower
 
-                            If IdRule = Id Then
+                            If ContextAssign.ContainsKey(IdRule) Then
 
-                                If VlRule <> Vl Then
+                                CondExists = True
+
+                                If ContextAssign(IdRule) <> VlRule Then
 
                                     Ok = False
                                     Exit For
@@ -844,9 +846,20 @@ Public Class HoomanParser
 
                             End If
 
+                            'If IdRule = Id Then
+
+                            '    If VlRule <> Vl Then
+
+                            '        Ok = False
+                            '        Exit For
+
+                            '    End If
+
+                            'End If
+
                         Next
 
-                        If Ok Then
+                        If Ok And CondExists Then
 
                             '----------------------------
                             ' Preconditions are verified
@@ -859,9 +872,11 @@ Public Class HoomanParser
 
                                 If IdRule = Id Then
 
-                                    If VlRule <> Vl Then
+                                    MatchRule = Regex.Match(Vl, "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
+                                    If Not MatchRule.Success Then
 
+                                        Throw New Exception("The [" + Id + " " + Vl + "] assignment does not match the pattern")
 
                                     End If
 
