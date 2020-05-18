@@ -16,12 +16,21 @@
 '     >>
 '----------------------------------------------
 
+Public Enum HoomanType
+
+    HoomanTypeUndefined
+    HoomanTypeSimple
+    HoomanTypeComplex
+
+End Enum
+
 Public Class HoomanLimb
 
     Public Index As Integer = 0
     Public Name As String = ""
     Public Value As Object = Nothing
     Public QuoteType As String = ""
+    Public ValueType As HoomanType
     Friend Row As Integer
     Friend Mandatory As Boolean = False     ' ! for sintax checking
     Friend JollyName As Boolean = False     ' * for sintax checking
