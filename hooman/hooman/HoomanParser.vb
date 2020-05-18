@@ -33,7 +33,7 @@ Public Class HoomanParser
     Dim ArrayMandatories As String()
     Dim MaxMandatory As Integer
 
-    ReadOnly Property Limbs() As HoomanLimbs
+    Public ReadOnly Property Limbs() As HoomanLimbs
 
         Get
             Return PropLimbs
@@ -41,7 +41,7 @@ Public Class HoomanParser
 
     End Property
 
-    Default ReadOnly Property Item(Name As String, ParamArray Indexes() As Integer) As Object
+    Default Public ReadOnly Property Item(Name As String, ParamArray Indexes() As Integer) As Object
 
         Get
 
@@ -411,7 +411,10 @@ Public Class HoomanParser
 
                                         If TypeOf L(Indexes(I)) IsNot HoomanLimbs Then
                                             L(Indexes(I)) = New HoomanLimbs
-                                            DirectCast(L(Indexes(I)), HoomanLimbs).Name = Indexes(I)
+                                            With DirectCast(L(Indexes(I)), HoomanLimbs)
+                                                .Name = Indexes(I)
+                                                .Row = L.GetElementByName(Indexes(I)).Row
+                                            End With
                                         End If
 
                                     End If
@@ -427,7 +430,7 @@ Public Class HoomanParser
                                     '----------------------------------------------
 
                                     If Value = "@" And Not Indexes(1).ToLower = "hooman" Then
-                                        L(Name) = ""
+                                        L(Name, Row) = ""
                                     End If
 
                                 Else
@@ -461,17 +464,17 @@ Public Class HoomanParser
 
                                                 ElseIf Value = "*" Then
 
-                                                    L(Name) = ""
+                                                    L(Name, Row) = ""
                                                     L.GetElementByName(Name).JollyName = True
 
                                                 ElseIf Value = "..." Then
 
-                                                    L(Name) = ""
+                                                    L(Name, Row) = ""
                                                     L.GetElementByName(Name).Iterable = True
 
                                                 Else
 
-                                                    L(Name) = Value
+                                                    L(Name, Row) = Value
 
                                                 End If
 
@@ -480,7 +483,7 @@ Public Class HoomanParser
                                         ElseIf Indexes(3) IsNot Nothing AndAlso
                                            Indexes(3).ToLower = "rules" Then
 
-                                            L(Name) = Value
+                                            L(Name, Row) = Value
 
                                             If ParentLevel = 4 Then
 
@@ -502,13 +505,13 @@ Public Class HoomanParser
 
                                         Else
 
-                                            L(Name) = Value
+                                            L(Name, Row) = Value
 
                                         End If
 
                                     Else
 
-                                        L(Name) = Value
+                                        L(Name, Row) = Value
 
                                     End If
 
@@ -688,7 +691,7 @@ Public Class HoomanParser
 
                     Else
 
-                        Throw New Exception("Path [" + P + "] not allowed")
+                        Throw New Exception("Path [" + P + "] not allowed at row " + CStr(S.Row))
 
                     End If
 
@@ -700,7 +703,7 @@ Public Class HoomanParser
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("Path [" + P + "] not allowed")
+                    Throw New Exception("Path [" + P + "] not allowed at row " + CStr(L(I).Row))
 
                 End If
 
@@ -774,6 +777,7 @@ Public Class HoomanParser
         Dim ContextAssign As Dictionary(Of String, String) = Nothing
         Dim Id As String = ""
         Dim Vl As String = ""
+        Dim Row As Integer = 0
         Dim IdRule As String = ""
         Dim VlRule As String = ""
         Dim MatchRule As Match = Nothing
@@ -788,7 +792,7 @@ Public Class HoomanParser
 
                     If HoomanIndexGetRules(S.Name) IsNot Nothing Then
 
-                        Throw New Exception("The [" + S.Name + "] variable must be simple")
+                        Throw New Exception("The [" + S.Name + "] variable must be simple at row " + CStr(S.Row))
 
                     End If
 
@@ -804,6 +808,7 @@ Public Class HoomanParser
 
                     Id = L(I).Name.ToLower
                     Vl = DirectCast(L(I).Value, String).ToLower
+                    Row = L(I).Row
 
                     If Not ContextLoaded Then
 
@@ -844,18 +849,11 @@ Public Class HoomanParser
 
                                 End If
 
+                            Else
+
+                                Throw New Exception("The [" + IdRule + "] variable is mandatory 'cause it's precondition in a rule at row " + CStr(Row))
+
                             End If
-
-                            'If IdRule = Id Then
-
-                            '    If VlRule <> Vl Then
-
-                            '        Ok = False
-                            '        Exit For
-
-                            '    End If
-
-                            'End If
 
                         Next
 
@@ -876,7 +874,7 @@ Public Class HoomanParser
 
                                     If Not MatchRule.Success Then
 
-                                        Throw New Exception("The [" + Id + " " + Vl + "] assignment does not match the pattern")
+                                        Throw New Exception("The [" + Id + " " + Vl + "] assignment does not match the pattern at row " + CStr(Row))
 
                                     End If
 

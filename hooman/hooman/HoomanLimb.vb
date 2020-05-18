@@ -22,6 +22,7 @@ Public Class HoomanLimb
     Public Name As String = ""
     Public Value As Object = Nothing
     Public QuoteType As String = ""
+    Friend Row As Integer
     Friend Mandatory As Boolean = False     ' ! for sintax checking
     Friend JollyName As Boolean = False     ' * for sintax checking
     Friend Iterable As Boolean = False     ' * for sintax checking

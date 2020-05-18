@@ -19,6 +19,7 @@
 Public Class HoomanLimbs
 
     Public Name As String = ""
+    Friend Row As Integer
 
     Dim CollItem As Dictionary(Of String, HoomanLimb) = New Dictionary(Of String, HoomanLimb)(StringComparer.OrdinalIgnoreCase)
     Dim CollIndex As Dictionary(Of Integer, String) = New Dictionary(Of Integer, String)
@@ -55,6 +56,35 @@ Public Class HoomanLimbs
                 ObjLimb.Index = LastID
                 ObjLimb.Name = Name
                 ObjLimb.Value = value
+
+                CollItem.Add(Name, ObjLimb)
+
+                CollIndex.Add(LastID, Name)
+
+            End If
+
+        End Set
+
+    End Property
+
+    Default Friend WriteOnly Property Item(Name As String, Row As Integer) As Object
+
+        Set(value As Object)
+
+            If CollItem.ContainsKey(Name) Then
+
+                CollItem(Name).Value = value
+
+            Else
+
+                Dim ObjLimb As HoomanLimb = New HoomanLimb
+
+                LastID += 1
+
+                ObjLimb.Index = LastID
+                ObjLimb.Name = Name
+                ObjLimb.Value = value
+                ObjLimb.Row = Row + 1
 
                 CollItem.Add(Name, ObjLimb)
 
