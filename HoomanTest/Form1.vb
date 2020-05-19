@@ -6,9 +6,11 @@ Public Class Form1
 
         Dim H As hooman.HoomanParser = New hooman.HoomanParser
 
-        H.OnErrorRaise = True
+        H.OnErrorRaise = False
         'H.LoadHooman("c:\github\hooman\test1.fud")
-        H.LoadHooman("c:\github\hooman\checked.fud")
+        If Not H.LoadHooman("c:\github\hooman\checked.fud") Then
+            MsgBox(H.ErrDescription)
+        End If
 
         Debug.Print(H("data")("link")("subdata")("name", "Pippo"))
         Debug.Print(H.Item("data", "link", "subdata", "name").Value)

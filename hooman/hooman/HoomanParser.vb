@@ -394,7 +394,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("Not allowed outside [hooman\sintax\rules] " + Str(Row + 1))
+                                Throw New Exception("==> is not allowed outside [hooman\sintax\rules] at row " + Str(Row + 1))
 
                             End If
 
@@ -436,7 +436,6 @@ Public Class HoomanParser
 
                                         If L.GetValueType(Indexes(I)) <> HoomanType.HoomanTypeComplex Then
                                             L.SetLimb(Indexes(I), L.Item(Indexes(I)).Row) = New HoomanLimbs
-                                            L(Indexes(I)).Name = Indexes(I)
                                         End If
 
                                     End If
@@ -555,7 +554,7 @@ Public Class HoomanParser
 
                 Else
 
-                    Throw New Exception("Indentation not allowed at row " + Str(Row + 1))
+                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
 
                 End If
 
@@ -713,7 +712,7 @@ Public Class HoomanParser
 
                     Else
 
-                        Throw New Exception("Path [" + P + "] not allowed at row " + CStr(S.Row))
+                        Throw New Exception("Path [" + P + "] is not allowed at row " + CStr(S.Row))
 
                     End If
 
@@ -725,7 +724,7 @@ Public Class HoomanParser
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("Path [" + P + "] not allowed at row " + CStr(L.Item(I).Row))
+                    Throw New Exception("Path [" + P + "] is not allowed at row " + CStr(L.Item(I).Row))
 
                 End If
 

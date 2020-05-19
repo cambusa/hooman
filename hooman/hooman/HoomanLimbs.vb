@@ -134,6 +134,10 @@ Public Class HoomanLimbs
 
         Set(value As HoomanLimbs)
 
+            If value IsNot Nothing Then
+                value.Name = Id
+            End If
+
             If CollItem.ContainsKey(Id) Then
 
                 With CollItem(Id)
