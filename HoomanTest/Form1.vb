@@ -10,67 +10,71 @@ Public Class Form1
         'H.LoadHooman("c:\github\hooman\test1.fud")
         H.LoadHooman("c:\github\hooman\checked.fud")
 
+        Debug.Print(H("data")("link")("subdata")("name", "Pippo"))
+        Debug.Print(H.Item("data", "link", "subdata", "name").Value)
+        Debug.Print(H.Item("data", "link", "subdata").Value("name", "Topolino"))
+
         For I As Integer = 1 To H.Count
 
-            If H.Count(I) = -1 Then
+            If H.Item(I).ValueType = HoomanType.HoomanTypeSimple Then
 
-                With H(I)
+                With H.Item(I)
                     Debug.Print(.Name + ":" + .Value)
                 End With
 
             Else
 
-                With H(I)
+                With H.Item(I)
                     Debug.Print(.Name)
                 End With
 
                 For J As Integer = 1 To H.Count(I)
 
-                    If H.Count(I, J) = -1 Then
+                    If H.Item(I, J).ValueType = HoomanType.HoomanTypeSimple Then
 
-                        With H(I, J)
+                        With H.Item(I, J)
                             Debug.Print("  " + .Name + ":" + .Value)
                         End With
 
                     Else
 
-                        With H(I, J)
+                        With H.Item(I, J)
                             Debug.Print("  " + .Name)
                         End With
 
                         For K As Integer = 1 To H.Count(I, J)
 
-                            If H.Count(I, J, K) = -1 Then
+                            If H.Item(I, J, K).ValueType = HoomanType.HoomanTypeSimple Then
 
-                                With H(I, J, K)
+                                With H.Item(I, J, K)
                                     Debug.Print("    " + .Name + ":" + .Value)
                                 End With
 
                             Else
 
-                                With H(I, J, K)
+                                With H.Item(I, J, K)
                                     Debug.Print("    " + .Name)
                                 End With
 
                                 For M As Integer = 1 To H.Count(I, J, K)
 
-                                    If H.Count(I, J, K, M) = -1 Then
+                                    If H.Item(I, J, K, M).ValueType = HoomanType.HoomanTypeSimple Then
 
-                                        With H(I, J, K, M)
+                                        With H.Item(I, J, K, M)
                                             Debug.Print("      " + .Name + ":" + .Value)
                                         End With
 
                                     Else
 
-                                        With H(I, J, K, M)
+                                        With H.Item(I, J, K, M)
                                             Debug.Print("      " + .Name)
                                         End With
 
                                         For N As Integer = 1 To H.Count(I, J, K, M)
 
-                                            If H.Count(I, J, K, M, N) = -1 Then
+                                            If H.Item(I, J, K, M, N).ValueType = HoomanType.HoomanTypeSimple Then
 
-                                                With H(I, J, K, M, N)
+                                                With H.Item(I, J, K, M, N)
                                                     Debug.Print("        " + .Name + ":" + .Value)
                                                 End With
 

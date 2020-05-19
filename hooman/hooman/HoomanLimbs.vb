@@ -25,7 +25,25 @@ Public Class HoomanLimbs
     Dim CollIndex As Dictionary(Of Integer, String) = New Dictionary(Of Integer, String)
     Dim LastID As Integer = 0
 
-    Public ReadOnly Property GetLimb(Id As String) As HoomanLimb
+    Public ReadOnly Property Item(Index As Integer) As HoomanLimb
+
+        Get
+
+            If CollIndex.ContainsKey(Index) Then
+
+                Return CollItem(CollIndex(Index))
+
+            Else
+
+                Return New HoomanLimb
+
+            End If
+
+        End Get
+
+    End Property
+
+    Public ReadOnly Property Item(Id As String) As HoomanLimb
 
         Get
 
@@ -35,61 +53,7 @@ Public Class HoomanLimbs
 
             Else
 
-                Return Nothing
-
-            End If
-
-        End Get
-
-    End Property
-
-    Public ReadOnly Property GetLimbs(Id As String) As HoomanLimbs
-
-        Get
-
-            If CollItem.ContainsKey(Id) Then
-
-                If CollItem(Id).ValueType = HoomanType.HoomanTypeComplex Then
-
-                    Return DirectCast(CollItem(Id).Value, HoomanLimbs)
-
-                Else
-
-                    Return Nothing
-
-                End If
-
-            Else
-
-                Return Nothing
-
-            End If
-
-        End Get
-
-    End Property
-
-    Public ReadOnly Property GetLimbs(Index As Integer) As HoomanLimbs
-
-        Get
-
-            If CollIndex.ContainsKey(Index) Then
-
-                Dim Id As String = CollIndex(Index)
-
-                If CollItem(Id).ValueType = HoomanType.HoomanTypeComplex Then
-
-                    Return DirectCast(CollItem(Id).Value, HoomanLimbs)
-
-                Else
-
-                    Return Nothing
-
-                End If
-
-            Else
-
-                Return Nothing
+                Return New HoomanLimb
 
             End If
 
@@ -199,24 +163,6 @@ Public Class HoomanLimbs
 
     End Property
 
-    Public ReadOnly Property GetLimb(Index As Integer) As HoomanLimb
-
-        Get
-
-            If CollIndex.ContainsKey(Index) Then
-
-                Return CollItem(CollIndex(Index))
-
-            Else
-
-                Return Nothing
-
-            End If
-
-        End Get
-
-    End Property
-
     Default Public ReadOnly Property Value(Id As String, DefaultValue As String) As String
 
         Get
@@ -235,17 +181,53 @@ Public Class HoomanLimbs
 
     End Property
 
-    Default Public ReadOnly Property Value(Id As String, DefaultValue As HoomanLimbs) As HoomanLimbs
+    Default Public ReadOnly Property Value(Id As String) As HoomanLimbs
 
         Get
 
             If CollItem.ContainsKey(Id) Then
 
-                Return DirectCast(CollItem(Id).Value, HoomanLimbs)
+                If CollItem(Id).ValueType = HoomanType.HoomanTypeComplex Then
+
+                    Return DirectCast(CollItem(Id).Value, HoomanLimbs)
+
+                Else
+
+                    Return New HoomanLimbs
+
+                End If
 
             Else
 
-                Return DefaultValue
+                Return New HoomanLimbs
+
+            End If
+
+        End Get
+
+    End Property
+
+    Default Public ReadOnly Property Value(Index As Integer) As HoomanLimbs
+
+        Get
+
+            If CollIndex.ContainsKey(Index) Then
+
+                Dim Id As String = CollIndex(Index)
+
+                If CollItem(Id).ValueType = HoomanType.HoomanTypeComplex Then
+
+                    Return DirectCast(CollItem(Id).Value, HoomanLimbs)
+
+                Else
+
+                    Return New HoomanLimbs
+
+                End If
+
+            Else
+
+                Return New HoomanLimbs
 
             End If
 
@@ -268,16 +250,6 @@ Public Class HoomanLimbs
     Public Function Exists(Index As Integer) As Boolean
 
         Return CollIndex.ContainsKey(Index)
-
-    End Function
-
-    Public Function GetElementByName(Id As String) As HoomanLimb
-
-        If CollItem.ContainsKey(Id) Then
-            Return CollItem(Id)
-        Else
-            Return Nothing
-        End If
 
     End Function
 

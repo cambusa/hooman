@@ -41,71 +41,89 @@ Public Class HoomanParser
 
     End Property
 
-    Default Public ReadOnly Property Item(Name As String, ParamArray Indexes() As Integer) As Object
+    Default Public ReadOnly Property Value(Id As String, DefaultValue As String) As String
 
         Get
 
-            Dim I As Integer
-            Dim L As HoomanLimbs
-
-            L = PropLimbs
-
-            For I = 0 To UBound(Indexes)
-
-                If L.GetValueType(Indexes(I)) = HoomanType.HoomanTypeComplex Then
-
-                    L = L.GetLimbs(Indexes(I))
-
-                Else
-
-                    Return ""
-
-                End If
-
-            Next I
-
-            Return L.GetLimb(Name).Value
+            Return PropLimbs(Id, DefaultValue)
 
         End Get
 
     End Property
 
-    Default Public ReadOnly Property Item(FirstIndex As Integer, ParamArray Indexes() As Integer) As Object
+    Default Public ReadOnly Property Value(Id As String) As HoomanLimbs
+
+        Get
+
+            Return PropLimbs(Id)
+
+        End Get
+
+    End Property
+
+    Default Public ReadOnly Property Value(Index As Integer) As HoomanLimbs
+
+        Get
+
+            Return PropLimbs(Index)
+
+        End Get
+
+    End Property
+
+    Public ReadOnly Property Item(FirstIndex As Integer, ParamArray Indexes() As Integer) As HoomanLimb
 
         Get
 
             Dim I As Integer
             Dim L As HoomanLimbs
 
-            If PropLimbs.GetValueType(FirstIndex) = HoomanType.HoomanTypeComplex Then
-                L = PropLimbs.GetLimbs(FirstIndex)
+            If Indexes.Length > 0 Then
+
+                L = PropLimbs(FirstIndex)
+
+                For I = 0 To Indexes.Length - 2
+
+                    L = L(Indexes(I))
+
+                Next
+
+                Return L.Item(Indexes(I))
+
             Else
-                Return PropLimbs.GetLimb(FirstIndex)
+
+                Return PropLimbs.Item(FirstIndex)
+
             End If
 
-            For I = 0 To UBound(Indexes)
+        End Get
 
-                If L.GetValueType(Indexes(I)) = HoomanType.HoomanTypeComplex Then
+    End Property
 
-                    L = L.GetLimbs(Indexes(I))
+    Public ReadOnly Property Item(FirstId As String, ParamArray Ids() As String) As HoomanLimb
 
-                Else
+        Get
 
-                    If I = UBound(Indexes) Then
+            Dim I As Integer
+            Dim L As HoomanLimbs
 
-                        Return L.GetLimb(Indexes(I))
+            If Ids.Length > 0 Then
 
-                    Else
+                L = PropLimbs(FirstId)
 
-                        Return Nothing
+                For I = 0 To Ids.Length - 2
 
-                    End If
+                    L = L(Ids(I))
 
-                End If
+                Next
 
-            Next I
+                Return L.Item(Ids(I))
 
-            Return L
+            Else
+
+                Return PropLimbs.Item(FirstId)
+
+            End If
 
         End Get
 
@@ -122,7 +140,7 @@ Public Class HoomanParser
 
             If L.GetValueType(Indexes(I)) = HoomanType.HoomanTypeComplex Then
 
-                L = L.GetLimbs(Indexes(I))
+                L = L(Indexes(I))
 
             Else
 
@@ -355,11 +373,11 @@ Public Class HoomanParser
                                 Dim L As HoomanLimbs = PropLimbs
 
                                 For I = 1 To ParentLevel - 1
-                                    L = L.GetLimbs(Indexes(I))
+                                    L = L(Indexes(I))
                                 Next
 
                                 L.SetString(ParentName, SaveRow) = QuoteBuffer
-                                L.GetElementByName(ParentName).QuoteType = QuoteType
+                                L.Item(ParentName).QuoteType = QuoteType
 
                             End If
 
@@ -417,13 +435,13 @@ Public Class HoomanParser
                                     If I = ParentLevel Then
 
                                         If L.GetValueType(Indexes(I)) <> HoomanType.HoomanTypeComplex Then
-                                            L.SetLimb(Indexes(I), L.GetElementByName(Indexes(I)).Row) = New HoomanLimbs
-                                            L.GetLimbs(Indexes(I)).Name = Indexes(I)
+                                            L.SetLimb(Indexes(I), L.Item(Indexes(I)).Row) = New HoomanLimbs
+                                            L(Indexes(I)).Name = Indexes(I)
                                         End If
 
                                     End If
 
-                                    L = L.GetLimbs(Indexes(I))
+                                    L = L(Indexes(I))
 
                                 Next
 
@@ -451,7 +469,7 @@ Public Class HoomanParser
                                                 If Value = "!" Then
 
                                                     L.SetString(Name, Row) = ""
-                                                    L.GetElementByName(Name).Mandatory = True
+                                                    L.Item(Name).Mandatory = True
                                                     Dim MandatoryPath As String = ""
 
                                                     For I = 4 To ParentLevel
@@ -469,12 +487,12 @@ Public Class HoomanParser
                                                 ElseIf Value = "*" Then
 
                                                     L.SetString(Name, Row) = ""
-                                                    L.GetElementByName(Name).JollyName = True
+                                                    L.Item(Name).JollyName = True
 
                                                 ElseIf Value = "..." Then
 
                                                     L.SetString(Name, Row) = ""
-                                                    L.GetElementByName(Name).Iterable = True
+                                                    L.Item(Name).Iterable = True
 
                                                 Else
 
@@ -574,7 +592,7 @@ Public Class HoomanParser
 
                 If L.GetValueType(Names(I)) = HoomanType.HoomanTypeComplex Then
 
-                    L = L.GetLimbs(Names(I))
+                    L = L(Names(I))
 
                 Else
 
@@ -608,7 +626,7 @@ Public Class HoomanParser
 
                 If L.GetValueType(Names(I)) = HoomanType.HoomanTypeComplex Then
 
-                    L = L.GetLimbs(Names(I))
+                    L = L(Names(I))
 
                 Else
 
@@ -667,7 +685,7 @@ Public Class HoomanParser
 
             If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
 
-                S = L.GetLimbs(I)
+                S = L(I)
 
                 If S.Name.ToLower <> "hooman" Then
 
@@ -703,11 +721,11 @@ Public Class HoomanParser
 
             Else
 
-                P = pathlevel + L.GetLimb(I).Name.ToLower + "\"
+                P = pathlevel + L.Item(I).Name.ToLower + "\"
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("Path [" + P + "] not allowed at row " + CStr(L.GetLimb(I).Row))
+                    Throw New Exception("Path [" + P + "] not allowed at row " + CStr(L.Item(I).Row))
 
                 End If
 
@@ -727,11 +745,11 @@ Public Class HoomanParser
 
             If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
 
-                S = L.GetLimbs(I)
+                S = L(I)
 
-                If L.GetLimb(I).JollyName Then
+                If L.Item(I).JollyName Then
                     P = pathlevel + "*\"
-                ElseIf L.GetLimb(I).Iterable Then
+                ElseIf L.Item(I).Iterable Then
                     P = pathlevel + "[" + S.Name.ToLower + "...\"
                 Else
                     P = pathlevel + S.Name.ToLower + "\"
@@ -741,7 +759,7 @@ Public Class HoomanParser
 
             Else
 
-                P = "|" + pathlevel + L.GetLimb(I).Name.ToLower + "\"
+                P = "|" + pathlevel + L.Item(I).Name.ToLower + "\"
 
                 If ListPaths.IndexOf(P) = -1 Then
                     ListPaths += P
@@ -790,7 +808,7 @@ Public Class HoomanParser
 
             If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
 
-                S = L.GetLimbs(I)
+                S = L(I)
 
                 If S.Name.ToLower <> "hooman" Then
 
@@ -806,11 +824,11 @@ Public Class HoomanParser
 
             Else
 
-                Dim CollRules As Dictionary(Of Integer, HoomanRule) = HoomanIndexGetRules(L.GetLimb(I).Name)
+                Dim CollRules As Dictionary(Of Integer, HoomanRule) = HoomanIndexGetRules(L.Item(I).Name)
 
                 If CollRules IsNot Nothing Then
 
-                    With L.GetLimb(I)
+                    With L.Item(I)
                         Id = .Name.ToLower
                         Vl = .Value.ToString.ToLower
                         Row = .Row
@@ -826,7 +844,7 @@ Public Class HoomanParser
 
                             If L.GetValueType(J) = HoomanType.HoomanTypeSimple Then
 
-                                With L.GetLimb(J)
+                                With L.Item(J)
                                     ContextAssign.Add(.Name, .Value.ToString)
                                 End With
                             End If
