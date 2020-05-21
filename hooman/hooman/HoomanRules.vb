@@ -181,7 +181,6 @@ Friend Module HoomanIndexRules
 
     End Function
 
-
     Friend ReadOnly Property HoomanDefaultValue(Id As String) As String
 
         Get

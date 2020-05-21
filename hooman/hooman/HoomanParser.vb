@@ -394,7 +394,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("==> is not allowed outside [hooman\sintax\rules] at row " + Str(Row + 1))
+                                Throw New Exception("==> is not allowed outside [ hooman\sintax\rules ] at row " + Str(Row + 1))
 
                             End If
 
