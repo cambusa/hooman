@@ -5,7 +5,7 @@ structure
         data
             id *
                 name
-                type
+                type char
                 value 
         matrix
             rows !
@@ -24,11 +24,15 @@ rules
         ==> 
         type (char|float|date)
     +
-        type float
+        type f.oat
         ==>
         value \d+(\.\d+)?
     +
         type date
         ==>
         value \d{8}
+    +
+        type cHar
+        ==>
+        value pippo
             

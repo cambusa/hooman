@@ -185,7 +185,7 @@ Public Class HoomanParser
             End If
 
             Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
-            Dim sBuffer As String = System.Text.Encoding.Default.GetString(bBuffer)
+            Dim sBuffer As String = System.Text.Encoding.UTF8.GetString(bBuffer)
 
             Return ParseHooman(sBuffer)
 
@@ -351,7 +351,7 @@ Public Class HoomanParser
                                     End If
 
                                     Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(sRow)
-                                    Dim sBuffer As String = System.Text.Encoding.Default.GetString(bBuffer)
+                                    Dim sBuffer As String = System.Text.Encoding.UTF8.GetString(bBuffer)
 
                                     QuoteBuffer += sBuffer
 
@@ -496,6 +496,7 @@ Public Class HoomanParser
                                                 Else
 
                                                     L.SetString(Name, Row) = Value
+                                                    HoomanDefaultAdd(Name, Value)
 
                                                 End If
 
@@ -712,7 +713,7 @@ Public Class HoomanParser
 
                     Else
 
-                        Throw New Exception("Path [" + P + "] is not allowed at row " + CStr(S.Row))
+                        Throw New Exception("The path [ " + P + " ] is not allowed at row " + CStr(S.Row))
 
                     End If
 
@@ -724,7 +725,7 @@ Public Class HoomanParser
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("Path [" + P + "] is not allowed at row " + CStr(L.Item(I).Row))
+                    Throw New Exception("The path [ " + P + " ] is not allowed at row " + CStr(L.Item(I).Row))
 
                 End If
 
@@ -781,7 +782,7 @@ Public Class HoomanParser
 
             If Not PathExists(V) Then
 
-                Throw New Exception("Path [" + ArrayMandatories(I) + "] is mandatory")
+                Throw New Exception("The path [ " + ArrayMandatories(I) + " ] is mandatory")
 
             End If
 
@@ -813,7 +814,7 @@ Public Class HoomanParser
 
                     If HoomanIndexGetRules(S.Name) IsNot Nothing Then
 
-                        Throw New Exception("The [" + S.Name + "] variable must be simple at row " + CStr(S.Row))
+                        Throw New Exception("The [ " + S.Name + " ] variable must be simple at row " + CStr(S.Row))
 
                     End If
 
@@ -859,14 +860,30 @@ Public Class HoomanParser
 
                         For Each kvContext As KeyValuePair(Of Integer, HoomanRuleContext) In kvRule.Value.DictioContext
 
-                            IdRule = kvContext.Value.Name.ToLower
-                            VlRule = kvContext.Value.Value.ToLower
+                            IdRule = kvContext.Value.Name  '.ToLower
+                            VlRule = kvContext.Value.Value  '.ToLower
 
                             If ContextAssign.ContainsKey(IdRule) Then
 
                                 CondExists = True
 
-                                If ContextAssign(IdRule) <> VlRule Then
+                                'If ContextAssign(IdRule) <> VlRule Then
+                                MatchRule = Regex.Match(ContextAssign(IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+
+                                If Not MatchRule.Success Then
+
+                                    Ok = False
+                                    Exit For
+
+                                End If
+
+                            ElseIf HoomanDefaultExists(IdRule) Then
+
+                                CondExists = True
+
+                                MatchRule = Regex.Match(HoomanDefaultValue(IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+
+                                If Not MatchRule.Success Then
 
                                     Ok = False
                                     Exit For
@@ -875,7 +892,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("The [" + IdRule + "] variable is mandatory 'cause it's precondition in a rule at row " + CStr(Row))
+                                Throw New Exception("The [ " + IdRule + " ] variable is mandatory because it is precondition in a rule at row " + CStr(Row))
 
                             End If
 
@@ -898,7 +915,7 @@ Public Class HoomanParser
 
                                     If Not MatchRule.Success Then
 
-                                        Throw New Exception("The [" + Id + " " + Vl + "] assignment does not match the pattern at row " + CStr(Row))
+                                        Throw New Exception("The [ " + Id + " " + Vl + " ] assignment does not match the pattern at row " + CStr(Row))
 
                                     End If
 

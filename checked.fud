@@ -13,9 +13,12 @@ extract
             type date
             value 20200101
         +
+            name importo
+            type Float
+            value 23.78
+        +
             name descrizione
-            type float
-            value 23,78
+            value Pippo
     matrix
         rows
  

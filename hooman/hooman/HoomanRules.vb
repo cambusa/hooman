@@ -116,6 +116,8 @@ Friend Module HoomanIndexRules
     Dim CollIndex As Dictionary(Of String, Dictionary(Of Integer, HoomanRule)) = New Dictionary(Of String, Dictionary(Of Integer, HoomanRule))(StringComparer.OrdinalIgnoreCase)
     Dim LastIndexID As Integer = 0
 
+    Dim CollDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+
     Friend Sub HoomanIndexAdd(Id As String, ObjRule As HoomanRule)
 
         Dim ObjColl As Dictionary(Of Integer, HoomanRule)
@@ -131,7 +133,7 @@ Friend Module HoomanIndexRules
 
         End If
 
-        LastIndexID + = 1
+        LastIndexID += 1
         ObjColl.Add(LastIndexID, ObjRule)
 
     End Sub
@@ -140,6 +142,8 @@ Friend Module HoomanIndexRules
 
         CollIndex.Clear()
         LastIndexID = 0
+
+        CollDefault.Clear()
 
     End Sub
 
@@ -156,5 +160,40 @@ Friend Module HoomanIndexRules
         End If
 
     End Function
+
+    Friend Sub HoomanDefaultAdd(Id As String, Value As String)
+
+        If Value.Trim <> "" Then
+
+            If Not CollDefault.ContainsKey(Id) Then
+
+                CollDefault.Add(Id, Value)
+
+            End If
+
+        End If
+
+    End Sub
+
+    Friend Function HoomanDefaultExists(Id As String) As Boolean
+
+        Return CollDefault.ContainsKey(Id)
+
+    End Function
+
+
+    Friend ReadOnly Property HoomanDefaultValue(Id As String) As String
+
+        Get
+
+            If CollDefault.ContainsKey(Id) Then
+                Return CollDefault(Id)
+            Else
+                Return ""
+            End If
+
+        End Get
+
+    End Property
 
 End Module
