@@ -1,7 +1,7 @@
 # Hooman v1.0 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
 
 
-__Specification for a new human-writable configuration language - (CC0) 2020 Rodolfo Calzetti__
+__Specification for a new human-writable configuration language - © 2020 Rodolfo Calzetti__
 
 
 ## Rules
