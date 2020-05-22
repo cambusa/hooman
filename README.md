@@ -32,6 +32,8 @@ __Specification for a new human-writable configuration language - © 2020 Rodolf
 
 ```==>```: entail in the syntactic rules 
 
+```hooman/sintax/structure/.../variable defaultValue```: default value for syntactic rules 
+
 ---
 
 _Example for ETL configuration_
