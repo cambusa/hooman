@@ -1,7 +1,15 @@
 # Hooman v1.0 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
 
 
-__Specification for a new human-writable configuration language - © 2020 Rodolfo Calzetti__
+__Specification for a new human-writable declarative language - © 2020 Rodolfo Calzetti__
+
+An alternative to XML, JSON and YAML if the document is to be written by a human.
+
+Notable features:
+1. Indentation is significant (like Python)
+2. Files can be included
+3. You can define a syntax and rules on values
+4. Does not require escaping
 
 
 ## The thirteen rules
@@ -236,10 +244,10 @@ worksheet
 
 ---
 
-## Why Hooman?
+## Why the name Hooman and the extension .fud??
 
 ```
-cat_says
+the_cat_replies
     <<
         Look, i'm a hooman, 
         get off da counter, 
