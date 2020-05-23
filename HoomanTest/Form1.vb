@@ -6,9 +6,13 @@ Public Class Form1
 
         Dim H As hooman.HoomanParser = New hooman.HoomanParser
 
+        'Dim PathFud As String = "c:\github\hooman\test1.fud"
+        Dim PathFud As String = "c:\github\hooman\checked.fud"
+        'Dim PathFud As String = "c:\github\hooman\fivespaces.fud"
+        'Dim PathFud As String = "c:\github\hooman\tabs.fud"
+
         H.OnErrorRaise = False
-        'H.LoadHooman("c:\github\hooman\test1.fud")
-        If Not H.LoadHooman("c:\github\hooman\checked.fud") Then
+        If Not H.LoadHooman(PathFud) Then
             MsgBox(H.ErrDescription)
         End If
 

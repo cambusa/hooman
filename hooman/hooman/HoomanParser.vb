@@ -32,6 +32,8 @@ Public Class HoomanParser
 
     Dim ArrayMandatories As String()
     Dim MaxMandatory As Integer
+    Dim IndentationSize As Integer = 4
+    Dim TabEquivalence As String = ""
 
     Public ReadOnly Property Limbs() As HoomanLimbs
 
@@ -184,8 +186,7 @@ Public Class HoomanParser
 
             End If
 
-            Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
-            Dim sBuffer As String = System.Text.Encoding.UTF8.GetString(bBuffer)
+            Dim sBuffer As String = HoomanLoadFile(PathName)
 
             Return ParseHooman(sBuffer)
 
@@ -209,7 +210,8 @@ Public Class HoomanParser
 
         Try
 
-            Dim MatchRows As MatchCollection
+            Dim MatchRows As MatchCollection = Nothing
+            Dim MatchTest As Match = Nothing
             Dim Indexes As String()
 
             MaxMandatory = 0
@@ -221,6 +223,17 @@ Public Class HoomanParser
             HoomanIndexClear()
 
             ReDim Indexes(1000)
+
+            ' Solving indentation size 
+            IndentationSize = 4
+
+            MatchTest = Regex.Match(sBuffer, "[\r\n]( +)(\w+|\+)", RegexOptions.Multiline)
+
+            If MatchTest.Success Then
+                IndentationSize = MatchTest.Groups(1).Length
+            End If
+
+            TabEquivalence = New String(Chr(32), IndentationSize)
 
             MatchRows = Regex.Matches(sBuffer, "^.*$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
@@ -267,7 +280,7 @@ Public Class HoomanParser
 
         Do While (Row < MatchRows.Count)
 
-            sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "")
+            sRow = MatchRows(Row).Value.Replace(vbTab, TabEquivalence).Replace(vbCr, "").Replace(vbLf, "")
 
             If sRow.Trim <> "" Then
 
@@ -275,13 +288,13 @@ Public Class HoomanParser
 
                 Do
 
-                    If sRow.Length < 4 * CurrIndentation + 4 Then
+                    If sRow.Length < IndentationSize * (CurrIndentation + 1) Then
 
                         sRow = sRow.Trim
 
                         Exit Do
 
-                    ElseIf sRow.Substring(4 * CurrIndentation, 4) = "    " Then
+                    ElseIf sRow.Substring(IndentationSize * CurrIndentation, IndentationSize) = TabEquivalence Then
 
                         CurrIndentation += 1
 
@@ -325,20 +338,20 @@ Public Class HoomanParser
 
                                 End If
 
-                                sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "")
+                                sRow = MatchRows(Row).Value.Replace(vbTab, TabEquivalence).Replace(vbCr, "").Replace(vbLf, "")
 
                                 If sRow.Trim = QuoteType + ">>" AndAlso
-                                   sRow.TrimEnd.Length < QuoteType.Length + 2 + 4 * (CurrIndentation + 1) AndAlso
-                                   sRow.TrimEnd.Length >= QuoteType.Length + 2 + 4 * CurrIndentation Then
+                                   sRow.TrimEnd.Length < QuoteType.Length + 2 + IndentationSize * (CurrIndentation + 1) AndAlso
+                                   sRow.TrimEnd.Length >= QuoteType.Length + 2 + IndentationSize * CurrIndentation Then
                                     Exit Do
                                 End If
 
-                                If sRow.Length < 4 * (CurrIndentation + 1) AndAlso sRow.Trim = "" Then
+                                If sRow.Length < IndentationSize * (CurrIndentation + 1) AndAlso sRow.Trim = "" Then
                                     sRow = ""
-                                ElseIf sRow.Length < 4 * (CurrIndentation + 1) OrElse sRow.Substring(0, 4 * (CurrIndentation + 1)).Trim <> "" Then
+                                ElseIf sRow.Length < IndentationSize * (CurrIndentation + 1) OrElse sRow.Substring(0, IndentationSize * (CurrIndentation + 1)).Trim <> "" Then
                                     Throw New Exception("Wrong indentation at row " + Str(Row + 1))
                                 Else
-                                    sRow = sRow.Substring(4 * (CurrIndentation + 1))
+                                    sRow = sRow.Substring(IndentationSize * (CurrIndentation + 1))
                                 End If
 
                                 If sRow.Trim.StartsWith("<--") Then
@@ -352,10 +365,7 @@ Public Class HoomanParser
 
                                     End If
 
-                                    Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(sRow)
-                                    Dim sBuffer As String = System.Text.Encoding.UTF8.GetString(bBuffer)
-
-                                    QuoteBuffer += sBuffer
+                                    QuoteBuffer += HoomanLoadFile(sRow)
 
                                 Else
 
@@ -576,10 +586,25 @@ Public Class HoomanParser
     Private Sub HoomanInclude(sBuffer As String, ParentName As String, ParentLevel As Integer, ByRef Indexes As String())
 
         Dim MatchRows As MatchCollection
+        Dim MatchTest As Match
+        Dim SaveIndentationSize As Integer = IndentationSize
+        Dim SaveTabEquivalence As String = TabEquivalence
+
+        ' Solving indentation size 
+        MatchTest = Regex.Match(sBuffer, "[\r\n]( +)(\w+|\+)", RegexOptions.Multiline)
+
+        If MatchTest.Success Then
+            IndentationSize = MatchTest.Groups(1).Length
+        End If
+
+        TabEquivalence = New String(Chr(32), IndentationSize)
 
         MatchRows = Regex.Matches(sBuffer, "^.*$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
         HoomanAnalisys(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
+
+        IndentationSize = SaveIndentationSize
+        TabEquivalence = SaveTabEquivalence
 
     End Sub
 
@@ -936,5 +961,21 @@ Public Class HoomanParser
         Next
 
     End Sub
+
+    Private Function HoomanLoadFile(PathName As String) As String
+
+        Dim FirstByte As Integer = 0
+        Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
+
+        If bBuffer(0) = 239 Then ' Test EF
+
+            ' BOM UTF8 management
+            FirstByte = 3
+
+        End If
+
+        Return System.Text.Encoding.UTF8.GetString(bBuffer, FirstByte, bBuffer.Length - FirstByte)
+
+    End Function
 
 End Class

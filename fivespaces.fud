@@ -1,0 +1,42 @@
+hooman
+     version 1
+     sintax
+          <<hooman
+               <-- sintax.fud
+          hooman>>
+        
+extract
+     mandatorio
+     data
+          0
+               name codice
+               type date
+               value 20200101
+          +
+               name importo
+               type Float
+               value 23.78
+          +
+               name descrizione
+               value Pippo
+     matrix
+          rows
+ 
+data
+     link
+          subdata
+               name Morena
+               link
+                    subdata
+                         name Serafino
+                         link
+                              subdata
+                                   name Giorgio
+
+complesso
+     <<
+          Pippo
+            >>
+            Toplino
+     >>
+    
