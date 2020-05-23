@@ -3,13 +3,13 @@
 
 __Specification for a new human-writable declarative language - © 2020 Rodolfo Calzetti__
 
-An alternative to XML, JSON and YAML if the document is to be written by a human.
+It's an alternative to XML, JSON and YAML if the document is to be written by a human.
 
 Notable features:
 1. Indentation is significant (like Python)
 2. Files can be included
 3. You can define a syntax and rules on values
-4. Does not require escaping
+4. It doesn't require any escaping
 
 
 ## The thirteen rules
