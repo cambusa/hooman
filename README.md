@@ -4,9 +4,7 @@
 __Specification for a new human-writable configuration language - © 2020 Rodolfo Calzetti__
 
 
-## Rules
-
-```Four leading spaces```: a tabular key
+## The thirteen rules
 
 ```Spaces and tabs after a variable```: simple assignement
 
