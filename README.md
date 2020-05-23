@@ -8,7 +8,7 @@ It's an alternative to XML, JSON and YAML if the document is to be written by a 
 Notable features:
 1. Indentation is significant (like Python)
 2. Files can be included
-3. You can define a syntax and rules on values
+3. You can define a syntax structure and rules on values
 4. It doesn't require any escaping
 
 
@@ -18,7 +18,7 @@ Notable features:
 
 ```New line + Indentation```: complex assignement
 
-```<<   >>```: text
+```<<   >>```: multiline text
 
 ```<<TAG  ...  TAG>>  ```: open/close mode
 
