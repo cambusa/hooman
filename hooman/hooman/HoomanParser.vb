@@ -33,7 +33,7 @@ Public Class HoomanParser
     Dim ArrayMandatories As String()
     Dim MaxMandatory As Integer
     Dim IndentationSize As Integer = 4
-    Dim TabEquivalence As String = ""
+    Dim TabEquivalence As String = "    "
 
     Public ReadOnly Property Limbs() As HoomanLimbs
 
