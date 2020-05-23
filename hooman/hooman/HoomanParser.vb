@@ -321,13 +321,15 @@ Public Class HoomanParser
 
                                 If Row >= MatchRows.Count Then
 
-                                    Throw New Exception("Guillemots at row " + Str(SaveRow + 1) + " have not a closure")
+                                    Throw New Exception("The guillemots at row " + Str(SaveRow + 1) + " have not a closure")
 
                                 End If
 
                                 sRow = MatchRows(Row).Value.Replace(vbTab, "    ").Replace(vbCr, "").Replace(vbLf, "")
 
-                                If sRow.Trim = QuoteType + ">>" Then
+                                If sRow.Trim = QuoteType + ">>" AndAlso
+                                   sRow.TrimEnd.Length < QuoteType.Length + 2 + 4 * (CurrIndentation + 1) AndAlso
+                                   sRow.TrimEnd.Length >= QuoteType.Length + 2 + 4 * CurrIndentation Then
                                     Exit Do
                                 End If
 
