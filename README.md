@@ -10,7 +10,7 @@ Notable features:
 2. Files can be included
 3. You can define a syntax structure and rules on values
 4. It doesn't require any escaping
-
+5. Structure and values can be overwritten
 
 ## The thirteen rules
 
@@ -98,7 +98,7 @@ hooman
 
 document
     <<hooman
-        <-- include.txt
+        <-- include.fud
     hooman>>
 
 document @
@@ -215,9 +215,8 @@ _Example with external syntax checking_
 hooman
     version 1
     syntax
-        <<hooman
-            <--     ..\syntax.hooman
-        hooman>>
+        <--  ..\grammar\syntax.fud
+
 data
     name Rodolfo
     address
