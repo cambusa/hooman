@@ -1,7 +1,7 @@
 hooman
     version 1
-    sintax
-        <-- sintax.fud
+    syntax
+        <-- syntax.fud
         
 extract
     mandatorio

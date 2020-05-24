@@ -32,8 +32,8 @@ Public Class HoomanLimb
     Public QuoteType As String = ""
     Public ValueType As HoomanType = HoomanType.HoomanTypeUndefined
     Friend Row As Integer = 0
-    Friend Mandatory As Boolean = False     ' ! for sintax checking
-    Friend JollyName As Boolean = False     ' * for sintax checking
-    Friend Iterable As Boolean = False     ' * for sintax checking
+    Friend Mandatory As Boolean = False     ' ! for syntax checking
+    Friend JollyName As Boolean = False     ' * for syntax checking
+    Friend Iterable As Boolean = False     ' * for syntax checking
 
 End Class

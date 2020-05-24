@@ -1,8 +1,8 @@
 hooman
      version 1
-     sintax
+     syntax
           <<hooman
-               <-- sintax.fud
+               <-- syntax.fud
           hooman>>
         
 extract

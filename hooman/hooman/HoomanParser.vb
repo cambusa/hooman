@@ -240,10 +240,10 @@ Public Class HoomanParser
             HoomanAnalisys(MatchRows, 0, "", 0, -1, Indexes)
 
             '-----------------
-            ' Sintax checking
+            ' Syntax checking
             '-----------------
 
-            SintaxChecking()
+            SyntaxChecking()
 
             Return True
 
@@ -412,7 +412,7 @@ Public Class HoomanParser
                             If Indexes(1) IsNot Nothing AndAlso
                                Indexes(1).ToLower = "hooman" AndAlso
                                Indexes(2) IsNot Nothing AndAlso
-                               Indexes(2).ToLower = "sintax" AndAlso
+                               Indexes(2).ToLower = "syntax" AndAlso
                                Indexes(3) IsNot Nothing AndAlso
                                Indexes(3).ToLower = "rules" Then
 
@@ -420,7 +420,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("==> is not allowed outside [ hooman\sintax\rules ] at row " + Str(Row + 1))
+                                Throw New Exception("==> is not allowed outside [ hooman\syntax\rules ] at row " + Str(Row + 1))
 
                             End If
 
@@ -484,7 +484,7 @@ Public Class HoomanParser
 
                                     If Indexes(1).ToLower = "hooman" AndAlso
                                            Indexes(2) IsNot Nothing AndAlso
-                                           Indexes(2).ToLower = "sintax" Then
+                                           Indexes(2).ToLower = "syntax" Then
 
                                         If Indexes(3) IsNot Nothing AndAlso
                                            Indexes(3).ToLower = "structure" Then
@@ -567,7 +567,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("Wrong sintax at row " + Str(Row + 1))
+                                Throw New Exception("Wrong syntax at row " + Str(Row + 1))
 
                             End If
 
@@ -689,21 +689,21 @@ Public Class HoomanParser
 
     End Function
 
-    Private Sub SintaxChecking()
+    Private Sub SyntaxChecking()
 
-        Dim S As HoomanLimbs = Me.GetLimbs("hooman", "sintax", "structure")
+        Dim S As HoomanLimbs = Me.GetLimbs("hooman", "syntax", "structure")
 
         ListPaths = ""
 
         If S IsNot Nothing Then
 
             BuilderPaths(S, "")
-            SintaxAnalisys(PropLimbs, "")
+            SyntaxAnalisys(PropLimbs, "")
             MandatoryChecks()
 
         End If
 
-        Dim R As HoomanLimbs = Me.GetLimbs("hooman", "sintax", "rules")
+        Dim R As HoomanLimbs = Me.GetLimbs("hooman", "syntax", "rules")
 
         If R IsNot Nothing Then
 
@@ -713,7 +713,7 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Sub SintaxAnalisys(L As HoomanLimbs, pathlevel As String)
+    Private Sub SyntaxAnalisys(L As HoomanLimbs, pathlevel As String)
 
         Dim S As HoomanLimbs
         Dim I As Integer
@@ -742,15 +742,15 @@ Public Class HoomanParser
 
                     If ListPaths.IndexOf("|" + PDots) >= 0 Then
 
-                        SintaxAnalisys(S, PDots)
+                        SyntaxAnalisys(S, PDots)
 
                     ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
 
-                        SintaxAnalisys(S, P)
+                        SyntaxAnalisys(S, P)
 
                     ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
 
-                        SintaxAnalisys(S, PStar)
+                        SyntaxAnalisys(S, PStar)
 
                     Else
 

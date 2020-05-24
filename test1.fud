@@ -1,6 +1,6 @@
 hooman
     version 1
-    sintax
+    syntax
         exstract
             data
             matrix
@@ -43,7 +43,7 @@ transform
 subhooman
     *** Script follows
     <<hooman
-        <-- sample.txt
+        <-- sample.fud
     hooman>>
 
 subhooman
