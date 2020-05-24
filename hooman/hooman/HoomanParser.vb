@@ -377,7 +377,7 @@ Public Class HoomanParser
 
                             If QuoteType.ToLower = "hooman" Then
 
-                                Indexes(ParentLevel) = ParentName
+                                'Indexes(ParentLevel) = ParentName
                                 HoomanInclude(QuoteBuffer, ParentName, ParentLevel, Indexes)
 
                             Else
@@ -392,6 +392,20 @@ Public Class HoomanParser
                                 L.Item(ParentName).QuoteType = QuoteType
 
                             End If
+
+                        ElseIf sRow.StartsWith("<--") Then
+
+                            sRow = sRow.Substring(3).Trim
+
+                            If sRow.Substring(0, 2) <> "\\" And
+                               sRow.Substring(1, 1) <> ":" Then
+
+                                sRow = ConfigDirectory + sRow
+
+                            End If
+
+                            'Indexes(ParentLevel) = ParentName
+                            HoomanInclude(HoomanLoadFile(sRow), ParentName, ParentLevel, Indexes)
 
                         ElseIf sRow = "==>" Then
 

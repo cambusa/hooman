@@ -1,9 +1,7 @@
 hooman
     version 1
     sintax
-        <<hooman
-            <-- sintax.fud
-        hooman>>
+        <-- sintax.fud
         
 extract
     mandatorio
@@ -37,6 +35,6 @@ complesso
     <<
         Pippo
           >>
-          Toplino
+          Topolino
     >>
     
