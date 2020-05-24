@@ -38,7 +38,7 @@ Notable features:
 
 ```==>```: entail in the syntactic rules 
 
-```hooman/sintax/structure/.../variable defaultValue```: default value for syntactic rules 
+```hooman/syntax/structure/.../variable defaultValue```: default value for syntactic rules 
 
 ---
 
