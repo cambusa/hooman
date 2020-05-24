@@ -1,4 +1,4 @@
-# Hooman v1.0 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
+# Hooman v1.1 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
 
 
 __Specification for a new human-writable declarative language - © 2020 Rodolfo Calzetti__
@@ -10,7 +10,7 @@ Notable features:
 2. Files can be included
 3. You can define a syntax structure and rules on values
 4. It doesn't require any escaping
-5. Structure and values can be overwritten
+5. Structure and values can be overwritten (except for syntactic ones)
 
 ## The thirteen rules
 
