@@ -2,6 +2,8 @@ hooman
     version 1
     syntax
         <-- syntax.fud
+        <-- include3.fud
+        <-- virtualhooman
         
 extract
     mandatorio
@@ -36,5 +38,8 @@ complesso
         Pippo
           >>
           Topolino
+        <-- include1.fud
+        <-- virtualinclude
+        <-- include2.fud
     >>
     

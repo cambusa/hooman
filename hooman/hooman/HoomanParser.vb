@@ -35,6 +35,8 @@ Public Class HoomanParser
     Dim IndentationSize As Integer = 4
     Dim TabEquivalence As String = "    "
 
+    Public Event IncludeResource(Name As String, ByRef Contents As String, ByRef Cancel As Boolean)
+
     Public ReadOnly Property Limbs() As HoomanLimbs
 
         Get
@@ -175,13 +177,6 @@ Public Class HoomanParser
 
                 If Not ConfigDirectory.EndsWith("\") Then
                     ConfigDirectory += "\"
-                End If
-
-                If PathName.Substring(0, 2) <> "\\" And
-                   PathName.Substring(1, 1) <> ":" Then
-
-                    PathName = ConfigDirectory + PathName
-
                 End If
 
             End If
@@ -357,14 +352,6 @@ Public Class HoomanParser
                                 If sRow.Trim.StartsWith("<--") Then
 
                                     sRow = sRow.Trim.Substring(3).Trim
-
-                                    If sRow.Substring(0, 2) <> "\\" And
-                                       sRow.Substring(1, 1) <> ":" Then
-
-                                        sRow = ConfigDirectory + sRow
-
-                                    End If
-
                                     QuoteBuffer += HoomanLoadFile(sRow)
 
                                 Else
@@ -377,7 +364,6 @@ Public Class HoomanParser
 
                             If QuoteType.ToLower = "hooman" Then
 
-                                'Indexes(ParentLevel) = ParentName
                                 HoomanInclude(QuoteBuffer, ParentName, ParentLevel, Indexes)
 
                             Else
@@ -396,15 +382,6 @@ Public Class HoomanParser
                         ElseIf sRow.StartsWith("<--") Then
 
                             sRow = sRow.Substring(3).Trim
-
-                            If sRow.Substring(0, 2) <> "\\" And
-                               sRow.Substring(1, 1) <> ":" Then
-
-                                sRow = ConfigDirectory + sRow
-
-                            End If
-
-                            'Indexes(ParentLevel) = ParentName
                             HoomanInclude(HoomanLoadFile(sRow), ParentName, ParentLevel, Indexes)
 
                         ElseIf sRow = "==>" Then
@@ -978,17 +955,37 @@ Public Class HoomanParser
 
     Private Function HoomanLoadFile(PathName As String) As String
 
-        Dim FirstByte As Integer = 0
-        Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
+        Dim sBuffer As String = ""
+        Dim Cancel As Boolean = False
 
-        If bBuffer(0) = 239 Then ' Test EF
+        RaiseEvent IncludeResource(PathName, sBuffer, Cancel)
 
-            ' BOM UTF8 management
-            FirstByte = 3
+        If Cancel Then
+
+            Return sBuffer
+
+        Else
+
+            If PathName.Substring(0, 2) <> "\\" And
+               PathName.Substring(1, 1) <> ":" Then
+
+                PathName = ConfigDirectory + PathName
+
+            End If
+
+            Dim FirstByte As Integer = 0
+            Dim bBuffer As Byte() = System.IO.File.ReadAllBytes(PathName)
+
+            If bBuffer(0) = 239 Then ' Test EF
+
+                ' BOM UTF8 management
+                FirstByte = 3
+
+            End If
+
+            Return System.Text.Encoding.UTF8.GetString(bBuffer, FirstByte, bBuffer.Length - FirstByte)
 
         End If
-
-        Return System.Text.Encoding.UTF8.GetString(bBuffer, FirstByte, bBuffer.Length - FirstByte)
 
     End Function
 

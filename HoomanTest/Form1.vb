@@ -2,9 +2,11 @@
 
 Public Class Form1
 
+    Dim WithEvents H As hooman.HoomanParser
+
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
-        Dim H As hooman.HoomanParser = New hooman.HoomanParser
+        H = New hooman.HoomanParser
 
         'Dim PathFud As String = "c:\github\hooman\test1.fud"
         Dim PathFud As String = "c:\github\hooman\checked.fud"
@@ -105,6 +107,24 @@ Public Class Form1
             End If
 
         Next
+
+    End Sub
+
+    Private Sub H_IncludeResource(Name As String, ByRef Contents As String, ByRef Cancel As Boolean) Handles H.IncludeResource
+
+        If Name = "virtualinclude" Then
+
+            Cancel = True
+            Contents += "virtual1" + vbCrLf
+            Contents += "virtual2" + vbCrLf
+
+        ElseIf Name = "virtualhooman" Then
+
+            Cancel = True
+            Contents += "virtual1" + vbCrLf
+            Contents += vbTab + "virtual2 Pippo" + vbCrLf
+
+        End If
 
     End Sub
 
