@@ -35,7 +35,7 @@ Public Class HoomanParser
     Dim IndentationSize As Integer = 4
     Dim TabEquivalence As String = "    "
 
-    Public Event IncludeResource(Name As String, ByRef Contents As String, ByRef Cancel As Boolean)
+    Public Event VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String)
 
     Public ReadOnly Property Limbs() As HoomanLimbs
 
@@ -181,7 +181,7 @@ Public Class HoomanParser
 
             End If
 
-            Dim sBuffer As String = HoomanLoadFile(PathName)
+            Dim sBuffer As String = HoomanLoadFile(PathName, 0)
 
             Return ParseHooman(sBuffer)
 
@@ -352,7 +352,7 @@ Public Class HoomanParser
                                 If sRow.Trim.StartsWith("<--") Then
 
                                     sRow = sRow.Trim.Substring(3).Trim
-                                    QuoteBuffer += HoomanLoadFile(sRow)
+                                    QuoteBuffer += HoomanLoadFile(sRow, Row + 1)
 
                                 Else
 
@@ -382,7 +382,7 @@ Public Class HoomanParser
                         ElseIf sRow.StartsWith("<--") Then
 
                             sRow = sRow.Substring(3).Trim
-                            HoomanInclude(HoomanLoadFile(sRow), ParentName, ParentLevel, Indexes)
+                            HoomanInclude(HoomanLoadFile(sRow, Row + 1), ParentName, ParentLevel, Indexes)
 
                         ElseIf sRow = "==>" Then
 
@@ -953,12 +953,19 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Function HoomanLoadFile(PathName As String) As String
+    Private Function HoomanLoadFile(PathName As String, Row As Integer) As String
 
         Dim sBuffer As String = ""
         Dim Cancel As Boolean = False
+        Dim ErrDescr As String = ""
 
-        RaiseEvent IncludeResource(PathName, sBuffer, Cancel)
+        RaiseEvent VirtualInclude(PathName, Row, sBuffer, Cancel, ErrDescr)
+
+        If ErrDescr <> "" Then
+
+            Throw New Exception(ErrDescr)
+
+        End If
 
         If Cancel Then
 
@@ -966,8 +973,7 @@ Public Class HoomanParser
 
         Else
 
-            If PathName.Substring(0, 2) <> "\\" And
-               PathName.Substring(1, 1) <> ":" Then
+               PathName.IndexOf(":") = -1 Then
 
                 PathName = ConfigDirectory + PathName
 

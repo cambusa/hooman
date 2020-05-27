@@ -110,7 +110,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub H_IncludeResource(Name As String, ByRef Contents As String, ByRef Cancel As Boolean) Handles H.IncludeResource
+    Private Sub H_VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String) Handles H.VirtualInclude
 
         If Name = "virtualinclude" Then
 
@@ -123,6 +123,8 @@ Public Class Form1
             Cancel = True
             Contents += "virtual1" + vbCrLf
             Contents += vbTab + "virtual2 Pippo" + vbCrLf
+
+            'ErrDescr = "File non trovato alla riga " + CStr(Row)
 
         End If
 
