@@ -973,6 +973,7 @@ Public Class HoomanParser
 
         Else
 
+            If Not PathName.StartsWith("\") AndAlso
                PathName.IndexOf(":") = -1 Then
 
                 PathName = ConfigDirectory + PathName
