@@ -37,13 +37,13 @@ extract
 transform
     *** Script follows
     <<javascript
-        <-- sample.js
+    <-- sample.js
     javascript>>
     
 subhooman
     *** Script follows
     <<hooman
-        <-- sample.fud
+    <-- sample.fud
     hooman>>
 
 subhooman

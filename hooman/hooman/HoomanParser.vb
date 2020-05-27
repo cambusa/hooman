@@ -229,8 +229,9 @@ Public Class HoomanParser
             End If
 
             TabEquivalence = New String(Chr(32), IndentationSize)
+            sBuffer = sBuffer.Replace(vbTab, TabEquivalence)
 
-            MatchRows = Regex.Matches(sBuffer, "^.*$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+            MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
             HoomanAnalisys(MatchRows, 0, "", 0, -1, Indexes)
 
@@ -275,33 +276,11 @@ Public Class HoomanParser
 
         Do While (Row < MatchRows.Count)
 
-            sRow = MatchRows(Row).Value.Replace(vbTab, TabEquivalence).Replace(vbCr, "").Replace(vbLf, "")
+            sRow = MatchRows(Row).Groups(2).Value.Replace(vbCr, "").Replace(vbLf, "").Trim
 
-            If sRow.Trim <> "" Then
+            If sRow <> "" Then
 
-                CurrIndentation = 0
-
-                Do
-
-                    If sRow.Length < IndentationSize * (CurrIndentation + 1) Then
-
-                        sRow = sRow.Trim
-
-                        Exit Do
-
-                    ElseIf sRow.Substring(IndentationSize * CurrIndentation, IndentationSize) = TabEquivalence Then
-
-                        CurrIndentation += 1
-
-                    Else
-
-                        sRow = sRow.Trim
-
-                        Exit Do
-
-                    End If
-
-                Loop
+                CurrIndentation = CInt(Math.Floor(MatchRows(Row).Groups(1).Value.Length / IndentationSize))
 
                 If CurrIndentation <= Indentation Then
 
@@ -309,7 +288,7 @@ Public Class HoomanParser
 
                 ElseIf CurrIndentation = Indentation + 2 And PrevIndentation = Indentation + 1 Then
 
-                    Indexes(ParentLevel + 1) = Name
+                    'Indexes(ParentLevel + 1) = Name
                     HoomanAnalisys(MatchRows, Row, Name, ParentLevel + 1, PrevIndentation, Indexes)
 
                 ElseIf CurrIndentation = Indentation + 1 Then
@@ -333,30 +312,40 @@ Public Class HoomanParser
 
                                 End If
 
-                                sRow = MatchRows(Row).Value.Replace(vbTab, TabEquivalence).Replace(vbCr, "").Replace(vbLf, "")
+                                ' Row value not right trimmed
+                                sRow = MatchRows(Row).Value.Replace(vbCr, "").Replace(vbLf, "")
 
-                                If sRow.Trim = QuoteType + ">>" AndAlso
-                                   sRow.TrimEnd.Length < QuoteType.Length + 2 + IndentationSize * (CurrIndentation + 1) AndAlso
-                                   sRow.TrimEnd.Length >= QuoteType.Length + 2 + IndentationSize * CurrIndentation Then
-                                    Exit Do
-                                End If
+                                Dim QuoteIndentation As Integer = CInt(Math.Floor(MatchRows(Row).Groups(1).Value.Length / IndentationSize))
 
-                                If sRow.Length < IndentationSize * (CurrIndentation + 1) AndAlso sRow.Trim = "" Then
-                                    sRow = ""
-                                ElseIf sRow.Length < IndentationSize * (CurrIndentation + 1) OrElse sRow.Substring(0, IndentationSize * (CurrIndentation + 1)).Trim <> "" Then
-                                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
-                                Else
+                                If QuoteIndentation > CurrIndentation Then
+
                                     sRow = sRow.Substring(IndentationSize * (CurrIndentation + 1))
-                                End If
+                                    QuoteBuffer += sRow + vbCrLf
 
-                                If sRow.Trim.StartsWith("<--") Then
+                                ElseIf QuoteIndentation = CurrIndentation Then
 
-                                    sRow = sRow.Trim.Substring(3).Trim
-                                    QuoteBuffer += HoomanLoadFile(sRow, Row + 1)
+                                    If sRow.Trim = QuoteType + ">>" Then
+
+                                        Exit Do
+
+                                    ElseIf sRow.Trim.StartsWith("<--") Then
+
+                                        sRow = sRow.Trim.Substring(3).Trim
+                                        QuoteBuffer += HoomanLoadFile(sRow, Row + 1)
+
+                                    Else
+
+                                        Throw New Exception("Wrong indentation at row " + Str(Row + 1))
+
+                                    End If
+
+                                ElseIf sRow.Trim = "" Then
+
+                                    QuoteBuffer += vbCrLf
 
                                 Else
 
-                                    QuoteBuffer += sRow + vbCrLf
+                                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
 
                                 End If
 
@@ -459,78 +448,85 @@ Public Class HoomanParser
 
                                 Else
 
-                                    If Indexes(1).ToLower = "hooman" AndAlso
-                                           Indexes(2) IsNot Nothing AndAlso
-                                           Indexes(2).ToLower = "syntax" Then
+                                    If Indexes(1).ToLower = "hooman" Then
 
-                                        If Indexes(3) IsNot Nothing AndAlso
-                                           Indexes(3).ToLower = "structure" Then
+                                        If Not L.Exists(Name) Then
 
-                                            If Not L.Exists(Name) Then
+                                            If Indexes(2) IsNot Nothing AndAlso
+                                               Indexes(2).ToLower = "syntax" Then
+#Region "Syntax"
+                                                If Indexes(3) IsNot Nothing AndAlso
+                                                    Indexes(3).ToLower = "structure" Then
+#Region "Structure"
+                                                    If Value = "!" Then
 
-                                                If Value = "!" Then
+                                                        L.SetString(Name, Row) = ""
+                                                        L.Item(Name).Mandatory = True
+                                                        Dim MandatoryPath As String = ""
 
-                                                    L.SetString(Name, Row) = ""
-                                                    L.Item(Name).Mandatory = True
-                                                    Dim MandatoryPath As String = ""
+                                                        For I = 4 To ParentLevel
+                                                            MandatoryPath += Indexes(I).ToLower + "\"
+                                                        Next
+                                                        MandatoryPath += Name.ToLower
 
-                                                    For I = 4 To ParentLevel
-                                                        MandatoryPath += Indexes(I).ToLower + "\"
-                                                    Next
-                                                    MandatoryPath += Name.ToLower
+                                                        MaxMandatory += 1
+                                                        If MaxMandatory > UBound(ArrayMandatories) Then
+                                                            ReDim Preserve ArrayMandatories(MaxMandatory + 100)
+                                                        End If
 
-                                                    MaxMandatory += 1
-                                                    If MaxMandatory > UBound(ArrayMandatories) Then
-                                                        ReDim Preserve ArrayMandatories(MaxMandatory + 100)
+                                                        ArrayMandatories(MaxMandatory) = MandatoryPath
+
+                                                    ElseIf Value = "*" Then
+
+                                                        L.SetString(Name, Row) = ""
+                                                        L.Item(Name).JollyName = True
+
+                                                    ElseIf Value = "..." Then
+
+                                                        L.SetString(Name, Row) = ""
+                                                        L.Item(Name).Iterable = True
+
+                                                    Else
+
+                                                        L.SetString(Name, Row) = Value
+                                                        HoomanDefaultAdd(Name, Value)
+
                                                     End If
+#End Region
+                                                ElseIf Indexes(3) IsNot Nothing AndAlso
+                                                    Indexes(3).ToLower = "rules" Then
+#Region "Rules"
+                                                    L.SetString(Name, Row) = Value
 
-                                                    ArrayMandatories(MaxMandatory) = MandatoryPath
+                                                    If ParentLevel = 4 Then
 
-                                                ElseIf Value = "*" Then
+                                                        If Not FlagRule Then
 
-                                                    L.SetString(Name, Row) = ""
-                                                    L.Item(Name).JollyName = True
+                                                            ObjRule = PropRules.Add()
+                                                            FlagRule = True
 
-                                                ElseIf Value = "..." Then
+                                                        End If
 
-                                                    L.SetString(Name, Row) = ""
-                                                    L.Item(Name).Iterable = True
+                                                        If FlagEntail Then
+                                                            ObjRule.AddClause(Name, Value)
+                                                            HoomanIndexAdd(Name, ObjRule)
+                                                        Else
+                                                            ObjRule.AddContext(Name, Value)
+                                                        End If
 
+                                                    End If
+#End Region
                                                 Else
 
                                                     L.SetString(Name, Row) = Value
-                                                    HoomanDefaultAdd(Name, Value)
 
                                                 End If
+#End Region
+                                            Else
+
+                                                L.SetString(Name, Row) = Value
 
                                             End If
-
-                                        ElseIf Indexes(3) IsNot Nothing AndAlso
-                                           Indexes(3).ToLower = "rules" Then
-
-                                            L.SetString(Name, Row) = Value
-
-                                            If ParentLevel = 4 Then
-
-                                                If Not FlagRule Then
-
-                                                    ObjRule = PropRules.Add()
-                                                    FlagRule = True
-
-                                                End If
-
-                                                If FlagEntail Then
-                                                    ObjRule.AddClause(Name, Value)
-                                                    HoomanIndexAdd(Name, ObjRule)
-                                                Else
-                                                    ObjRule.AddContext(Name, Value)
-                                                End If
-
-                                            End If
-
-                                        Else
-
-                                            L.SetString(Name, Row) = Value
 
                                         End If
 
@@ -589,8 +585,9 @@ Public Class HoomanParser
         End If
 
         TabEquivalence = New String(Chr(32), IndentationSize)
+        sBuffer = sBuffer.Replace(vbTab, TabEquivalence)
 
-        MatchRows = Regex.Matches(sBuffer, "^.*$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+        MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
         HoomanAnalisys(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
 

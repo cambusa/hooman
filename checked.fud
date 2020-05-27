@@ -1,4 +1,4 @@
-hooman
+hooman  
     version 1
     syntax
         <-- syntax.fud
@@ -37,9 +37,13 @@ complesso
     <<
         Pippo
           >>
-          Topolino
+          Topolino    
         <-- include1.fud
-        <-- virtualinclude
-        <-- include2.fud
+   
+    <-- virtualinclude
+    <-- include2.fud
+        s
     >>
-    
+
+<-- include1.fud
+

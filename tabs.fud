@@ -2,7 +2,7 @@ hooman
 	version 1
 	syntax
 		<<hooman
-			<-- syntax.fud
+		<-- syntax.fud
 		hooman>>
 	   
 extract
@@ -35,7 +35,7 @@ data
 
 complesso
 	<<
-		Pippo
+		Pippolo
 		  >>
 		  Toplino
 	>>
