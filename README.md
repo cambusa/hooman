@@ -1,4 +1,4 @@
-# Hooman v1.2 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
+# Hooman v1.3 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
 
 
 __Specification for a new human-writable declarative language - © 2020 Rodolfo Calzetti__
