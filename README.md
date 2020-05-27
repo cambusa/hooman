@@ -7,7 +7,7 @@ It's an alternative to XML, JSON and YAML if the document is to be written by a 
 
 Notable features:
 1. Indentation is significant (like Python)
-2. Files can be included
+2. Files and contents can be included
 3. You can define a syntax structure and rules on values
 4. It doesn't require any escaping
 5. Structure and values can be overwritten (except for syntactic ones)
@@ -62,7 +62,7 @@ extract
 transform
     *** Script follows
     <<javascript
-        <-- sample.js
+    <-- sample.js
     javascript>>
     
 load
@@ -98,7 +98,7 @@ hooman
 
 document
     <<hooman
-        <-- include.fud
+    <-- include.fud
     hooman>>
 
 document @
