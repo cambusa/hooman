@@ -288,7 +288,6 @@ Public Class HoomanParser
 
                 ElseIf CurrIndentation = Indentation + 2 And PrevIndentation = Indentation + 1 Then
 
-                    'Indexes(ParentLevel + 1) = Name
                     HoomanAnalisys(MatchRows, Row, Name, ParentLevel + 1, PrevIndentation, Indexes)
 
                 ElseIf CurrIndentation = Indentation + 1 Then
@@ -489,7 +488,6 @@ Public Class HoomanParser
                                                     Else
 
                                                         L.SetString(Name, Row) = Value
-                                                        HoomanDefaultAdd(Name, Value)
 
                                                     End If
 #End Region
@@ -681,7 +679,7 @@ Public Class HoomanParser
 
         If R IsNot Nothing Then
 
-            RuleChecks(PropLimbs)
+            RuleChecks(PropLimbs, "")
 
         End If
 
@@ -716,6 +714,8 @@ Public Class HoomanParser
 
                     If ListPaths.IndexOf("|" + PDots) >= 0 Then
 
+                        L.Item(I).Iterable = True
+
                         SyntaxAnalisys(S, PDots)
 
                     ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
@@ -724,11 +724,13 @@ Public Class HoomanParser
 
                     ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
 
+                        L.Item(I).JollyName = True
+
                         SyntaxAnalisys(S, PStar)
 
                     Else
 
-                        Throw New Exception("The path [ " + P + " ] is not allowed at row " + CStr(S.Row))
+                        Throw New Exception("The path [ " + pathlevel + S.Name.ToLower + " ] is not allowed at row " + CStr(S.Row))
 
                     End If
 
@@ -740,7 +742,12 @@ Public Class HoomanParser
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("The path [ " + P + " ] is not allowed at row " + CStr(L.Item(I).Row))
+                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
+
+                ElseIf (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
+                       (ListPaths + "*").IndexOf("|" + P + "*") = -1 Then
+
+                    Throw New Exception("The variable [ " + pathlevel + L.Item(I).Name.ToLower + " ] must be complex at row " + CStr(L.Item(I).Row))
 
                 End If
 
@@ -780,6 +787,10 @@ Public Class HoomanParser
                     ListPaths += P
                 End If
 
+                If DirectCast(L.Item(I).Value, String) <> "" Then
+                    HoomanDefaultAdd(pathlevel + L.Item(I).Name.ToLower, DirectCast(L.Item(I).Value, String))
+                End If
+
             End If
 
         Next
@@ -805,7 +816,7 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Sub RuleChecks(L As HoomanLimbs)
+    Private Sub RuleChecks(L As HoomanLimbs, hPath As String)
 
         Dim S As HoomanLimbs = Nothing
         Dim I As Integer
@@ -833,7 +844,28 @@ Public Class HoomanParser
 
                     End If
 
-                    RuleChecks(S)
+                    If L.Item(I).JollyName Then
+
+                        RuleChecks(S, hPath + "*\")
+
+                    ElseIf L.Item(I).Iterable Then
+
+                        Dim PosDots As Integer = hPath.IndexOf("[" + S.Name.ToLower + "...\")
+                        Dim PDots As String = ""
+
+                        If PosDots >= 0 Then
+                            PDots = hPath.Substring(0, PosDots) + "[" + S.Name.ToLower + "...\"
+                        Else
+                            PDots = hPath + "[" + S.Name.ToLower + "...\"
+                        End If
+
+                        RuleChecks(S, PDots)
+
+                    Else
+
+                        RuleChecks(S, hPath + S.Name.ToLower + "\")
+
+                    End If
 
                 End If
 
@@ -875,14 +907,13 @@ Public Class HoomanParser
 
                         For Each kvContext As KeyValuePair(Of Integer, HoomanRuleContext) In kvRule.Value.DictioContext
 
-                            IdRule = kvContext.Value.Name  '.ToLower
-                            VlRule = kvContext.Value.Value  '.ToLower
+                            IdRule = kvContext.Value.Name
+                            VlRule = kvContext.Value.Value
 
                             If ContextAssign.ContainsKey(IdRule) Then
 
                                 CondExists = True
 
-                                'If ContextAssign(IdRule) <> VlRule Then
                                 MatchRule = Regex.Match(ContextAssign(IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                                 If Not MatchRule.Success Then
@@ -892,11 +923,11 @@ Public Class HoomanParser
 
                                 End If
 
-                            ElseIf HoomanDefaultExists(IdRule) Then
+                            ElseIf HoomanDefaultExists(hPath + IdRule) Then
 
                                 CondExists = True
 
-                                MatchRule = Regex.Match(HoomanDefaultValue(IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+                                MatchRule = Regex.Match(HoomanDefaultValue(hPath + IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                                 If Not MatchRule.Success Then
 

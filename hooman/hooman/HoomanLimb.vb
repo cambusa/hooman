@@ -34,6 +34,6 @@ Public Class HoomanLimb
     Friend Row As Integer = 0
     Friend Mandatory As Boolean = False     ' ! for syntax checking
     Friend JollyName As Boolean = False     ' * for syntax checking
-    Friend Iterable As Boolean = False     ' * for syntax checking
+    Friend Iterable As Boolean = False     ' ... for syntax checking
 
 End Class

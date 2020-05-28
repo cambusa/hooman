@@ -163,13 +163,9 @@ Friend Module HoomanIndexRules
 
     Friend Sub HoomanDefaultAdd(Id As String, Value As String)
 
-        If Value.Trim <> "" Then
+        If Not CollDefault.ContainsKey(Id) Then
 
-            If Not CollDefault.ContainsKey(Id) Then
-
-                CollDefault.Add(Id, Value)
-
-            End If
+            CollDefault.Add(Id, Value)
 
         End If
 

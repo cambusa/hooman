@@ -2,22 +2,27 @@ structure
     extract
         mandatorio !
             name
+            type
+            value 
         data
             id *
                 name
                 type char
                 value 
         matrix
-            rows !
-                cols
+            rows
+                row *
+                    cols
+                        col *
     data
         link
             subdata ...
                 name
+                type date
+                value
                 link
                     subdata
     complesso
-        item
     
 rules
     1
