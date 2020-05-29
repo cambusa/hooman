@@ -37,6 +37,7 @@ Public Class HoomanParser
 
     Dim CollDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
     Dim ParentOfDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)
+    Dim DefaultExists As Boolean = False
 
     Public Event VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String)
 
@@ -222,6 +223,7 @@ Public Class HoomanParser
 
             CollDefault.Clear()
             ParentOfDefault.Clear()
+            DefaultExists = False
 
             ReDim Indexes(1000)
 
@@ -495,6 +497,10 @@ Public Class HoomanParser
 
                                                         L.SetString(Name, Row) = Value
 
+                                                        If Value <> "" Then
+                                                            DefaultExists = True
+                                                        End If
+
                                                     End If
 #End Region
                                                 ElseIf Indexes(3) IsNot Nothing AndAlso
@@ -676,7 +682,11 @@ Public Class HoomanParser
         If S IsNot Nothing Then
 
             BuilderPaths(S, "")
-            CompleteDefault(PropLimbs, "")
+
+            If DefaultExists Then
+                CompleteDefault(PropLimbs, "")
+            End If
+
             SyntaxAnalisys(PropLimbs, "")
             MandatoryChecks()
 
@@ -743,14 +753,14 @@ Public Class HoomanParser
 
                 P = pathlevel + L.Item(I).Name.ToLower + "\"
 
-                If (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
+                If ListPaths.IndexOf("|" + P) = -1 Then
+
+                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
+
+                ElseIf (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
                        (ListPaths + "*").IndexOf("|" + P + "*") = -1 Then
 
                     Throw New Exception("The variable [ " + pathlevel + L.Item(I).Name.ToLower + " ] must be complex at row " + CStr(L.Item(I).Row))
-
-                ElseIf ListPaths.IndexOf("|" + P) = -1 Then
-
-                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
 
                 End If
 
@@ -760,37 +770,16 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Sub PreAssignDefault(L As HoomanLimbs, Id As String, pathlevel As String)
-
-        If ParentOfDefault.ContainsKey(pathlevel) Then
-
-            Dim DefaultName As String = ParentOfDefault(pathlevel)
-
-            If CollDefault.ContainsKey(pathlevel + DefaultName) Then
-
-                If Not L(Id).Exists(DefaultName) Then
-
-                    If L.Item(Id).ValueType = HoomanType.HoomanTypeSimple Then
-                        L.SetLimb(Id, 0) = New HoomanLimbs
-                    End If
-
-                    L(Id).SetString(DefaultName, 0) = CollDefault(pathlevel + DefaultName)
-
-                End If
-
-            End If
-
-        End If
-
-    End Sub
-
     Private Sub CompleteDefault(L As HoomanLimbs, pathlevel As String)
 
         Dim I As Integer
         Dim P As String
         Dim PStar As String
         Dim PDots As String
+        Dim NormalizePath As String
         Dim PosDots As Integer
+        Dim DefaultName As String
+        Dim Id As String
 
         For I = 1 To L.Count
 
@@ -806,32 +795,44 @@ Public Class HoomanParser
                     PDots = pathlevel + "[" + L.Item(I).Name.ToLower + "...\"
                 End If
 
+                NormalizePath = ""
+
                 If ListPaths.IndexOf("|" + PDots) >= 0 Then
-
-                    L.Item(I).Iterable = True
-                    PreAssignDefault(L, L.Item(I).Name, PDots)
-
-                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
-                        CompleteDefault(L(I), PDots)
-                    End If
-
+                    NormalizePath = PDots
                 ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
-
-                    PreAssignDefault(L, L.Item(I).Name, P)
-
-                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
-                        CompleteDefault(L(I), P)
-                    End If
-
+                    NormalizePath = P
                 ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
+                    NormalizePath = PStar
+                End If
 
-                    L.Item(I).JollyName = True
-                    PreAssignDefault(L, L.Item(I).Name, PStar)
+                If NormalizePath <> "" Then
 
-                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
-                        CompleteDefault(L(I), PStar)
+                    If ParentOfDefault.ContainsKey(NormalizePath) Then
+
+                        DefaultName = ParentOfDefault(NormalizePath)
+                        Id = L.Item(I).Name
+
+                        If CollDefault.ContainsKey(NormalizePath + DefaultName) Then
+
+                            If Not L(Id).Exists(DefaultName) Then
+
+                                If L.Item(Id).ValueType = HoomanType.HoomanTypeSimple Then
+                                    L.SetLimb(Id, 0) = New HoomanLimbs
+                                End If
+
+                                L(Id).SetString(DefaultName, 0) = CollDefault(NormalizePath + DefaultName)
+
+                            End If
+
+                        End If
+
                     End If
 
+                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
+
+                        CompleteDefault(L(I), NormalizePath)
+
+                    End If
 
                 End If
 
