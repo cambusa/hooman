@@ -8,6 +8,7 @@ hooman
 extract
     mandatorio
         name
+        value 20200529
     data
         0
             name codice
@@ -18,8 +19,8 @@ extract
             type Float
             value 23.78
         +
-            name descrizione
-            value Pippo
+
+
     matrix
         rows
  

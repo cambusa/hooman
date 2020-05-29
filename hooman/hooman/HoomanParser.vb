@@ -35,6 +35,9 @@ Public Class HoomanParser
     Dim IndentationSize As Integer = 4
     Dim TabEquivalence As String = "    "
 
+    Dim CollDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+    Dim ParentOfDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)
+
     Public Event VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String)
 
     Public ReadOnly Property Limbs() As HoomanLimbs
@@ -216,6 +219,9 @@ Public Class HoomanParser
             PropLimbs.Clear()
             PropRules.Clear()
             HoomanIndexClear()
+
+            CollDefault.Clear()
+            ParentOfDefault.Clear()
 
             ReDim Indexes(1000)
 
@@ -670,6 +676,7 @@ Public Class HoomanParser
         If S IsNot Nothing Then
 
             BuilderPaths(S, "")
+            CompleteDefault(PropLimbs, "")
             SyntaxAnalisys(PropLimbs, "")
             MandatoryChecks()
 
@@ -679,7 +686,7 @@ Public Class HoomanParser
 
         If R IsNot Nothing Then
 
-            RuleChecks(PropLimbs, "")
+            RuleChecks(PropLimbs)
 
         End If
 
@@ -700,7 +707,7 @@ Public Class HoomanParser
 
                 S = L(I)
 
-                If S.Name.ToLower <> "hooman" Then
+                If S.Name.ToLower <> "hooman" Or pathlevel <> "" Then
 
                     P = pathlevel + S.Name.ToLower + "\"
                     PStar = pathlevel + "*\"
@@ -714,8 +721,6 @@ Public Class HoomanParser
 
                     If ListPaths.IndexOf("|" + PDots) >= 0 Then
 
-                        L.Item(I).Iterable = True
-
                         SyntaxAnalisys(S, PDots)
 
                     ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
@@ -723,8 +728,6 @@ Public Class HoomanParser
                         SyntaxAnalisys(S, P)
 
                     ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
-
-                        L.Item(I).JollyName = True
 
                         SyntaxAnalisys(S, PStar)
 
@@ -740,14 +743,95 @@ Public Class HoomanParser
 
                 P = pathlevel + L.Item(I).Name.ToLower + "\"
 
-                If ListPaths.IndexOf("|" + P) = -1 Then
-
-                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
-
-                ElseIf (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
+                If (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
                        (ListPaths + "*").IndexOf("|" + P + "*") = -1 Then
 
                     Throw New Exception("The variable [ " + pathlevel + L.Item(I).Name.ToLower + " ] must be complex at row " + CStr(L.Item(I).Row))
+
+                ElseIf ListPaths.IndexOf("|" + P) = -1 Then
+
+                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
+
+                End If
+
+            End If
+
+        Next
+
+    End Sub
+
+    Private Sub PreAssignDefault(L As HoomanLimbs, Id As String, pathlevel As String)
+
+        If ParentOfDefault.ContainsKey(pathlevel) Then
+
+            Dim DefaultName As String = ParentOfDefault(pathlevel)
+
+            If CollDefault.ContainsKey(pathlevel + DefaultName) Then
+
+                If Not L(Id).Exists(DefaultName) Then
+
+                    If L.Item(Id).ValueType = HoomanType.HoomanTypeSimple Then
+                        L.SetLimb(Id, 0) = New HoomanLimbs
+                    End If
+
+                    L(Id).SetString(DefaultName, 0) = CollDefault(pathlevel + DefaultName)
+
+                End If
+
+            End If
+
+        End If
+
+    End Sub
+
+    Private Sub CompleteDefault(L As HoomanLimbs, pathlevel As String)
+
+        Dim I As Integer
+        Dim P As String
+        Dim PStar As String
+        Dim PDots As String
+        Dim PosDots As Integer
+
+        For I = 1 To L.Count
+
+            If L.Item(I).Name.ToLower <> "hooman" Or pathlevel <> "" Then
+
+                P = pathlevel + L.Item(I).Name.ToLower + "\"
+                PStar = pathlevel + "*\"
+
+                PosDots = pathlevel.IndexOf("[" + L.Item(I).Name.ToLower + "...\")
+                If PosDots >= 0 Then
+                    PDots = pathlevel.Substring(0, PosDots) + "[" + L.Item(I).Name.ToLower + "...\"
+                Else
+                    PDots = pathlevel + "[" + L.Item(I).Name.ToLower + "...\"
+                End If
+
+                If ListPaths.IndexOf("|" + PDots) >= 0 Then
+
+                    L.Item(I).Iterable = True
+                    PreAssignDefault(L, L.Item(I).Name, PDots)
+
+                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
+                        CompleteDefault(L(I), PDots)
+                    End If
+
+                ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
+
+                    PreAssignDefault(L, L.Item(I).Name, P)
+
+                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
+                        CompleteDefault(L(I), P)
+                    End If
+
+                ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
+
+                    L.Item(I).JollyName = True
+                    PreAssignDefault(L, L.Item(I).Name, PStar)
+
+                    If L.GetValueType(I) = HoomanType.HoomanTypeComplex Then
+                        CompleteDefault(L(I), PStar)
+                    End If
+
 
                 End If
 
@@ -787,8 +871,20 @@ Public Class HoomanParser
                     ListPaths += P
                 End If
 
-                If DirectCast(L.Item(I).Value, String) <> "" Then
-                    HoomanDefaultAdd(pathlevel + L.Item(I).Name.ToLower, DirectCast(L.Item(I).Value, String))
+                Dim Vl As String = DirectCast(L.Item(I).Value, String)
+
+                If Vl <> "" Then
+
+                    Dim PathId As String = pathlevel + L.Item(I).Name.ToLower
+
+                    If Not CollDefault.ContainsKey(PathId) Then
+                        CollDefault.Add(PathId, Vl)
+                    End If
+
+                    If Not ParentOfDefault.ContainsKey(pathlevel) Then
+                        ParentOfDefault.Add(pathlevel, L.Item(I).Name)
+                    End If
+
                 End If
 
             End If
@@ -816,7 +912,7 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Sub RuleChecks(L As HoomanLimbs, hPath As String)
+    Private Sub RuleChecks(L As HoomanLimbs)
 
         Dim S As HoomanLimbs = Nothing
         Dim I As Integer
@@ -844,28 +940,7 @@ Public Class HoomanParser
 
                     End If
 
-                    If L.Item(I).JollyName Then
-
-                        RuleChecks(S, hPath + "*\")
-
-                    ElseIf L.Item(I).Iterable Then
-
-                        Dim PosDots As Integer = hPath.IndexOf("[" + S.Name.ToLower + "...\")
-                        Dim PDots As String = ""
-
-                        If PosDots >= 0 Then
-                            PDots = hPath.Substring(0, PosDots) + "[" + S.Name.ToLower + "...\"
-                        Else
-                            PDots = hPath + "[" + S.Name.ToLower + "...\"
-                        End If
-
-                        RuleChecks(S, PDots)
-
-                    Else
-
-                        RuleChecks(S, hPath + S.Name.ToLower + "\")
-
-                    End If
+                    RuleChecks(S)
 
                 End If
 
@@ -915,19 +990,6 @@ Public Class HoomanParser
                                 CondExists = True
 
                                 MatchRule = Regex.Match(ContextAssign(IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
-
-                                If Not MatchRule.Success Then
-
-                                    Ok = False
-                                    Exit For
-
-                                End If
-
-                            ElseIf HoomanDefaultExists(hPath + IdRule) Then
-
-                                CondExists = True
-
-                                MatchRule = Regex.Match(HoomanDefaultValue(hPath + IdRule), "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                                 If Not MatchRule.Success Then
 

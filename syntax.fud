@@ -2,7 +2,7 @@ structure
     extract
         mandatorio !
             name
-            type
+            type date
             value 
         data
             id *
