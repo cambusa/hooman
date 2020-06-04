@@ -434,7 +434,7 @@ Public Class HoomanParser
                                     If I = ParentLevel Then
 
                                         If L.GetValueType(Indexes(I)) <> HoomanType.HoomanTypeComplex Then
-                                            L.SetLimb(Indexes(I), L.Item(Indexes(I)).Row) = New HoomanLimbs
+                                            L.SetLimb(Indexes(I), -1) = New HoomanLimbs
                                         End If
 
                                     End If
@@ -729,7 +729,7 @@ Public Class HoomanParser
                         PDots = pathlevel + "[" + S.Name.ToLower + "...\"
                     End If
 
-                    If ListPaths.IndexOf("|" + PDots) >= 0 Then
+                    If ListPaths.IndexOf("|" + PDots) >= 0 And ListPaths.IndexOf("|" + P) >= 0 Then
 
                         SyntaxAnalisys(S, PDots)
 
@@ -817,10 +817,10 @@ Public Class HoomanParser
                             If Not L(Id).Exists(DefaultName) Then
 
                                 If L.Item(Id).ValueType = HoomanType.HoomanTypeSimple Then
-                                    L.SetLimb(Id, 0) = New HoomanLimbs
+                                    L.SetLimb(Id, -1) = New HoomanLimbs
                                 End If
 
-                                L(Id).SetString(DefaultName, 0) = CollDefault(NormalizePath + DefaultName)
+                                L(Id).SetString(DefaultName, -1) = CollDefault(NormalizePath + DefaultName)
 
                             End If
 
@@ -858,6 +858,7 @@ Public Class HoomanParser
                     P = pathlevel + "*\"
                 ElseIf L.Item(I).Iterable Then
                     P = pathlevel + "[" + S.Name.ToLower + "...\"
+                    ListPaths += "|" + pathlevel + S.Name.ToLower + "\"
                 Else
                     P = pathlevel + S.Name.ToLower + "\"
                 End If

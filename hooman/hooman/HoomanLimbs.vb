@@ -104,6 +104,7 @@ Public Class HoomanLimbs
             If CollItem.ContainsKey(Id) Then
 
                 With CollItem(Id)
+                    .Value = Row + 1
                     .Value = value
                     .ValueType = HoomanType.HoomanTypeSimple
                 End With
@@ -142,7 +143,12 @@ Public Class HoomanLimbs
 
                 With CollItem(Id)
 
-                    value.Row = Row
+                    If Row >= 0 Then
+                        value.Row = Row + 1
+                    Else
+                        value.Row = .Row
+                    End If
+
                     .Value = value
                     .ValueType = HoomanType.HoomanTypeComplex
 
