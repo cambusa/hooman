@@ -97,9 +97,7 @@ hooman
     version 1
 
 document
-    <<hooman
     <-- include.fud
-    hooman>>
 
 document @
 document
