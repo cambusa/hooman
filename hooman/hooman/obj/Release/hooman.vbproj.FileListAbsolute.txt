@@ -6,3 +6,12 @@ C:\Sviluppo\hooman\hooman\hooman\obj\Release\hooman.vbproj.GenerateResource.Cach
 C:\Sviluppo\hooman\hooman\hooman\obj\Release\hooman.dll
 C:\Sviluppo\hooman\hooman\hooman\obj\Release\hooman.xml
 C:\Sviluppo\hooman\hooman\hooman\obj\Release\hooman.pdb
+C:\Github\hooman\hooman\hooman\bin\Release\hooman.dll
+C:\Github\hooman\hooman\hooman\bin\Release\hooman.pdb
+C:\Github\hooman\hooman\hooman\bin\Release\hooman.xml
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.vbprojResolveAssemblyReference.cache
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.Resources.resources
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.vbproj.GenerateResource.Cache
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.dll
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.xml
+C:\Github\hooman\hooman\hooman\obj\Release\hooman.pdb

@@ -1,9 +1,7 @@
 hooman
 	version 1
 	syntax
-		<<hooman
 		<-- syntax.fud
-		hooman>>
 	   
 extract
 	mandatorio

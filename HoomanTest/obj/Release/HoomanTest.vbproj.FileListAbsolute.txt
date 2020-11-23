@@ -1,1 +1,2 @@
 C:\Sviluppo\hooman\HoomanTest\bin\Release\HoomanTest.exe.config
+C:\Github\hooman\HoomanTest\bin\Release\HoomanTest.exe.config
