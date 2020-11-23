@@ -358,12 +358,6 @@ Public Class HoomanParser
 
                             Loop
 
-                            'If QuoteType.ToLower = "hooman" Then
-
-                            '    HoomanInclude(QuoteBuffer, ParentName, ParentLevel, Indexes)
-
-                            'Else
-
                             Dim L As HoomanLimbs = PropLimbs
 
                             For I = 1 To ParentLevel - 1
@@ -372,8 +366,6 @@ Public Class HoomanParser
 
                             L.SetString(ParentName, SaveRow) = QuoteBuffer
                             L.Item(ParentName).QuoteType = QuoteType
-
-                            'End If
 
                         ElseIf sRow.StartsWith("<--") Then
 
