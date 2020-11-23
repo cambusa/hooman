@@ -79,11 +79,10 @@ hooman
     version 1
 
 document
-    <<
-        Trick to solve integrals of rational functions
-    >>
     <<latex
-        \int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}
+        Trick to solve integrals of rational functions:
+        
+        $\int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}$
     latex>>
     
 ```    
