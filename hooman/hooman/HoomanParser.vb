@@ -331,7 +331,7 @@ Public Class HoomanParser
 
                                 ElseIf QuoteIndentation = CurrIndentation Then
 
-                                    If sRow.Trim = QuoteType + ">>" Then
+                                    If sRow.Trim = QuoteType + ">>" Or sRow.Trim = ">>" Then
 
                                         Exit Do
 
@@ -340,7 +340,7 @@ Public Class HoomanParser
                                         sRow = sRow.Trim.Substring(3).Trim
                                         QuoteBuffer += HoomanLoadFile(sRow, Row + 1)
 
-                                    Else
+                                    ElseIf Not sRow.Trim.StartsWith("***") Then
 
                                         Throw New Exception("Wrong indentation at row " + Str(Row + 1))
 

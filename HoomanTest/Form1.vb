@@ -8,8 +8,8 @@ Public Class Form1
 
         H = New hooman.HoomanParser
 
-        'Dim PathFud As String = "c:\github\hooman\test1.fud"
-        Dim PathFud As String = "c:\github\hooman\checked.fud"
+        Dim PathFud As String = "c:\github\hooman\test1.fud"
+        'Dim PathFud As String = "c:\github\hooman\checked.fud"
         'Dim PathFud As String = "c:\github\hooman\fivespaces.fud"
         'Dim PathFud As String = "c:\github\hooman\tabs.fud"
 
@@ -20,7 +20,7 @@ Public Class Form1
 
         Debug.Print(H("data")("link")("subdata")("name", "Pippo"))
         Debug.Print(H.Item("data", "link", "subdata", "name").Value)
-        Debug.Print(H.Item("data", "link", "subdata").Value("name", "Topolino"))
+        'Debug.Print(H.Item("data", "link", "subdata").Value("name", "Topolino"))
 
         For I As Integer = 1 To H.Count
 
