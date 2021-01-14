@@ -340,6 +340,10 @@ Public Class HoomanParser
                                         sRow = sRow.Trim.Substring(3).Trim
                                         QuoteBuffer += HoomanLoadFile(sRow, Row + 1)
 
+                                    ElseIf sRow.Trim = "" Then
+
+                                        QuoteBuffer += vbCrLf
+
                                     ElseIf Not sRow.Trim.StartsWith("***") Then
 
                                         Throw New Exception("Wrong indentation at row " + Str(Row + 1))
