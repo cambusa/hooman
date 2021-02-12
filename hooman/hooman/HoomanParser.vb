@@ -241,7 +241,7 @@ Public Class HoomanParser
 
             MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
-            HoomanAnalisys(MatchRows, 0, "", 0, -1, Indexes)
+            HoomanAnalysis(MatchRows, 0, "", 0, -1, Indexes)
 
             '-----------------
             ' Syntax checking
@@ -267,7 +267,7 @@ Public Class HoomanParser
 
     End Function
 
-    Private Sub HoomanAnalisys(MatchRows As MatchCollection, ByRef Row As Integer, ParentName As String, ParentLevel As Integer, Indentation As Integer, ByRef Indexes As String())
+    Private Sub HoomanAnalysis(MatchRows As MatchCollection, ByRef Row As Integer, ParentName As String, ParentLevel As Integer, Indentation As Integer, ByRef Indexes As String())
 
         Dim MatchArgs As Match
         Dim sRow As String
@@ -296,7 +296,7 @@ Public Class HoomanParser
 
                 ElseIf CurrIndentation = Indentation + 2 And PrevIndentation = Indentation + 1 Then
 
-                    HoomanAnalisys(MatchRows, Row, Name, ParentLevel + 1, PrevIndentation, Indexes)
+                    HoomanAnalysis(MatchRows, Row, Name, ParentLevel + 1, PrevIndentation, Indexes)
 
                 ElseIf CurrIndentation = Indentation + 1 Then
 
@@ -595,7 +595,7 @@ Public Class HoomanParser
 
         MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
-        HoomanAnalisys(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
+        HoomanAnalysis(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
 
         IndentationSize = SaveIndentationSize
         TabEquivalence = SaveTabEquivalence
