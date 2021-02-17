@@ -419,9 +419,9 @@ Public Class HoomanParser
 
                                 Indexes(ParentLevel + 1) = Name
 
-                                '--------------------
-                                ' Manage assignement
-                                '--------------------
+                                '-------------------
+                                ' Manage assignment
+                                '-------------------
 
                                 Dim L As HoomanLimbs = PropLimbs
 
@@ -683,7 +683,7 @@ Public Class HoomanParser
                 CompleteDefault(PropLimbs, "")
             End If
 
-            SyntaxAnalisys(PropLimbs, "")
+            SyntaxAnalysis(PropLimbs, "")
             MandatoryChecks()
 
         End If
@@ -698,7 +698,7 @@ Public Class HoomanParser
 
     End Sub
 
-    Private Sub SyntaxAnalisys(L As HoomanLimbs, pathlevel As String)
+    Private Sub SyntaxAnalysis(L As HoomanLimbs, pathlevel As String)
 
         Dim S As HoomanLimbs
         Dim I As Integer
@@ -727,15 +727,15 @@ Public Class HoomanParser
 
                     If ListPaths.IndexOf("|" + PDots) >= 0 And ListPaths.IndexOf("|" + P) >= 0 Then
 
-                        SyntaxAnalisys(S, PDots)
+                        SyntaxAnalysis(S, PDots)
 
                     ElseIf ListPaths.IndexOf("|" + P) >= 0 Then
 
-                        SyntaxAnalisys(S, P)
+                        SyntaxAnalysis(S, P)
 
                     ElseIf ListPaths.IndexOf("|" + PStar) >= 0 Then
 
-                        SyntaxAnalisys(S, PStar)
+                        SyntaxAnalysis(S, PStar)
 
                     Else
 
