@@ -1017,11 +1017,68 @@ Public Class HoomanParser
 
                                 If IdRule = Id Then
 
+                                    Dim CheckDate As Boolean = False
+                                    Dim Ye As Integer = 0
+                                    Dim Mo As Integer = 0
+                                    Dim Da As Integer = 0
+                                    Dim Ho As Integer = 0
+                                    Dim Mi As Integer = 0
+                                    Dim Se As Integer = 0
+                                    Dim DateTest As Date
+
+                                    If VlRule.StartsWith("{") Then
+                                        CheckDate = True
+                                        VlRule = VlRule.Substring(1, VlRule.Length - 2)
+                                    End If
+
                                     MatchRule = Regex.Match(Vl, "^" + VlRule + "$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                                     If Not MatchRule.Success Then
 
                                         Throw New Exception("The [ " + Id + " " + Vl + " ] assignment does not match the pattern at row " + CStr(Row))
+
+                                    ElseIf CheckDate Then
+
+                                        Select Case (MatchRule.Groups.Count - 1)
+
+                                            Case 3
+
+                                                Ye = Integer.Parse(MatchRule.Groups(1).Value)
+                                                Mo = Integer.Parse(MatchRule.Groups(2).Value)
+                                                Da = Integer.Parse(MatchRule.Groups(3).Value)
+
+                                            Case 5
+
+                                                Ye = Integer.Parse(MatchRule.Groups(1).Value)
+                                                Mo = Integer.Parse(MatchRule.Groups(2).Value)
+                                                Da = Integer.Parse(MatchRule.Groups(3).Value)
+                                                Ho = Integer.Parse(MatchRule.Groups(4).Value)
+                                                Mi = Integer.Parse(MatchRule.Groups(5).Value)
+
+                                            Case 6
+
+                                                Ye = Integer.Parse(MatchRule.Groups(1).Value)
+                                                Mo = Integer.Parse(MatchRule.Groups(2).Value)
+                                                Da = Integer.Parse(MatchRule.Groups(3).Value)
+                                                Ho = Integer.Parse(MatchRule.Groups(4).Value)
+                                                Mi = Integer.Parse(MatchRule.Groups(5).Value)
+                                                Se = Integer.Parse(MatchRule.Groups(6).Value)
+
+                                            Case Else
+
+                                                Throw New Exception("Bad date pattern at row " + CStr(Row) + ": the groups must be 3, 5 or 6")
+
+                                        End Select
+
+                                        DateTest = DateSerial(Ye, Mo, Da)
+
+                                        If Year(DateTest) <> Ye Or Month(DateTest) <> Mo Or Day(DateTest) <> Da Then
+                                            Throw New Exception("Bad date format at row " + CStr(Row))
+                                        End If
+
+                                        If Ho > 23 Or Mi > 60 Or Se > 60 Then
+                                            Throw New Exception("Bad date format at row " + CStr(Row))
+                                        End If
 
                                     End If
 

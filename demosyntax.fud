@@ -1,0 +1,23 @@
+hooman
+	varsion 1
+	syntax
+		structure
+			provider
+				attributes
+					id *
+						type
+						length
+						value
+
+		rules
+			1
+				==>
+				type (zerofilled|string|number|date|timestamp)
+			+
+				type number
+				==> 
+				value \d+(\.\d+)?
+			+
+				type date
+				==> 
+				value {(\d{4})(\d{2})(\d{2})}

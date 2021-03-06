@@ -1,0 +1,28 @@
+hooman
+	version 1
+
+<-- demosyntax.fud
+
+provider
+	attributes
+		code
+			type zerofilled
+			length 10
+
+		description
+			type string
+			length 50
+
+		note
+			type string
+			value
+				<<
+					Nel mezzo del cammin di nostra vita
+					mi ritrovai per una selva oscura
+					ch la diritta via era smarrita.
+				>>
+		giorno
+			type date
+			value 20210332
+
+

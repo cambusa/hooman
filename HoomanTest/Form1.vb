@@ -110,6 +110,22 @@ Public Class Form1
 
     End Sub
 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+
+        H = New hooman.HoomanParser
+
+        Dim PathFud As String = "c:\github\hooman\demomain.fud"
+        'Dim PathFud As String = "c:\github\hooman\checked.fud"
+        'Dim PathFud As String = "c:\github\hooman\fivespaces.fud"
+        'Dim PathFud As String = "c:\github\hooman\tabs.fud"
+
+        H.OnErrorRaise = False
+        If Not H.LoadHooman(PathFud) Then
+            MsgBox(H.ErrDescription)
+        End If
+
+    End Sub
+
     Private Sub H_VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String) Handles H.VirtualInclude
 
         If Name = "virtualinclude" Then
