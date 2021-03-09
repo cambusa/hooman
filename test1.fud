@@ -1,15 +1,11 @@
 hooman
     version 1
     syntax
-        exstract
-            data
-            matrix
+        structure
+            extract *
+                data
+                matrix
         
-        
-hooman
-    version 2
-    versione 3
-
 extract
     data
         code

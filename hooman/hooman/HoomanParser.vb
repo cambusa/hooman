@@ -281,6 +281,7 @@ Public Class HoomanParser
         Dim FlagEntail As Boolean = False
         Dim FlagRule As Boolean = False
         Dim ObjRule As HoomanRule = Nothing
+        Dim JollyRow As Integer = 0
 
         Do While (Row < MatchRows.Count)
 
@@ -483,6 +484,7 @@ Public Class HoomanParser
 
                                                         L.SetString(Name, Row) = ""
                                                         L.Item(Name).JollyName = True
+                                                        JollyRow = Row + 1
 
                                                     ElseIf Value = "..." Then
 
@@ -542,6 +544,12 @@ Public Class HoomanParser
 
                                     End If
 
+                                End If
+
+                                If (JollyRow > 0) Then
+                                    If (L.Count() > 1) Then
+                                        Throw New Exception("A wildcard variable cannot have siblings at row " + Str(JollyRow))
+                                    End If
                                 End If
 
                             Else
