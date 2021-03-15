@@ -27,6 +27,7 @@ Public Class HoomanParser
 
     Dim PropLimbs As HoomanLimbs = New HoomanLimbs
     Dim ListPaths As String = ""
+    Dim WildcardPaths As String = ""
 
     Dim PropRules As New HoomanRules
 
@@ -40,6 +41,12 @@ Public Class HoomanParser
     Dim DefaultExists As Boolean = False
 
     Public Event VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String)
+
+    Private Structure StructStatus
+        Dim Indexes As String()
+        Dim Wildcards As Boolean()
+        Dim Iterables As Boolean()
+    End Structure
 
     Public ReadOnly Property Limbs() As HoomanLimbs
 
@@ -211,10 +218,12 @@ Public Class HoomanParser
 
             Dim MatchRows As MatchCollection = Nothing
             Dim MatchTest As Match = Nothing
-            Dim Indexes As String()
+            Dim Status As StructStatus
 
             MaxMandatory = 0
             ReDim ArrayMandatories(100)
+
+            WildcardPaths = ""
 
             ErrDescription = ""
             PropLimbs.Clear()
@@ -225,7 +234,9 @@ Public Class HoomanParser
             ParentOfDefault.Clear()
             DefaultExists = False
 
-            ReDim Indexes(1000)
+            ReDim Status.Indexes(1000)
+            ReDim Status.Wildcards(1000)
+            ReDim Status.Iterables(1000)
 
             ' Solving indentation size 
             IndentationSize = 4
@@ -241,7 +252,7 @@ Public Class HoomanParser
 
             MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
-            HoomanAnalysis(MatchRows, 0, "", 0, -1, Indexes)
+            HoomanAnalysis(MatchRows, 0, "", "", 0, -1, Status)
 
             '-----------------
             ' Syntax checking
@@ -267,7 +278,7 @@ Public Class HoomanParser
 
     End Function
 
-    Private Sub HoomanAnalysis(MatchRows As MatchCollection, ByRef Row As Integer, ParentName As String, ParentLevel As Integer, Indentation As Integer, ByRef Indexes As String())
+    Private Sub HoomanAnalysis(MatchRows As MatchCollection, ByRef Row As Integer, ParentName As String, ParentPath As String, ParentLevel As Integer, Indentation As Integer, ByRef Status As StructStatus)
 
         Dim MatchArgs As Match
         Dim sRow As String
@@ -297,7 +308,20 @@ Public Class HoomanParser
 
                 ElseIf CurrIndentation = Indentation + 2 And PrevIndentation = Indentation + 1 Then
 
-                    HoomanAnalysis(MatchRows, Row, Name, ParentLevel + 1, PrevIndentation, Indexes)
+                    If WildcardPaths.IndexOf("|" + ParentPath + "[" + Name) >= 0 Then
+                        ParentPath += "["
+                    End If
+
+                    Dim PosIter = ParentPath.IndexOf("[" + Name)
+                    If PosIter >= 0 Then
+                        ParentPath = ParentPath.Substring(0, PosIter + 1)
+                    End If
+
+                    If WildcardPaths.IndexOf("|" + ParentPath + "*") >= 0 Then
+                        HoomanAnalysis(MatchRows, Row, Name, ParentPath + "*\", ParentLevel + 1, PrevIndentation, Status)
+                    Else
+                        HoomanAnalysis(MatchRows, Row, Name, ParentPath + Name + "\", ParentLevel + 1, PrevIndentation, Status)
+                    End If
 
                 ElseIf CurrIndentation = Indentation + 1 Then
 
@@ -366,7 +390,7 @@ Public Class HoomanParser
                             Dim L As HoomanLimbs = PropLimbs
 
                             For I = 1 To ParentLevel - 1
-                                L = L(Indexes(I))
+                                L = L(Status.Indexes(I))
                             Next
 
                             L.SetString(ParentName, SaveRow) = QuoteBuffer
@@ -375,16 +399,16 @@ Public Class HoomanParser
                         ElseIf sRow.StartsWith("<--") Then
 
                             sRow = sRow.Substring(3).Trim
-                            HoomanInclude(HoomanLoadFile(sRow, Row + 1), ParentName, ParentLevel, Indexes)
+                            HoomanInclude(HoomanLoadFile(sRow, Row + 1), ParentName, ParentPath, ParentLevel, Status)
 
                         ElseIf sRow = "==>" Then
 
-                            If Indexes(1) IsNot Nothing AndAlso
-                               Indexes(1).ToLower = "hooman" AndAlso
-                               Indexes(2) IsNot Nothing AndAlso
-                               Indexes(2).ToLower = "syntax" AndAlso
-                               Indexes(3) IsNot Nothing AndAlso
-                               Indexes(3).ToLower = "rules" Then
+                            If Status.Indexes(1) IsNot Nothing AndAlso
+                               Status.Indexes(1).ToLower = "hooman" AndAlso
+                               Status.Indexes(2) IsNot Nothing AndAlso
+                               Status.Indexes(2).ToLower = "syntax" AndAlso
+                               Status.Indexes(3) IsNot Nothing AndAlso
+                               Status.Indexes(3).ToLower = "rules" Then
 
                                 FlagEntail = True
 
@@ -410,15 +434,17 @@ Public Class HoomanParser
                                 '----------------------
 
                                 If Name = "+" Then
-                                    MatchArgs = Regex.Match(Indexes(ParentLevel + 1), "\d+")
+                                    MatchArgs = Regex.Match(Status.Indexes(ParentLevel + 1), "\d+")
                                     If MatchArgs.Success Then
-                                        Name = Str(Val(Indexes(ParentLevel + 1)) + 1).Trim
+                                        Name = Str(Val(Status.Indexes(ParentLevel + 1)) + 1).Trim
                                     Else
                                         Throw New Exception("The plus cannot be resolved at row " + Str(Row + 1))
                                     End If
                                 End If
 
-                                Indexes(ParentLevel + 1) = Name
+                                Status.Indexes(ParentLevel + 1) = Name
+                                Status.Wildcards(ParentLevel + 1) = False
+                                Status.Iterables(ParentLevel + 1) = False
 
                                 '-------------------
                                 ' Manage assignment
@@ -430,13 +456,15 @@ Public Class HoomanParser
 
                                     If I = ParentLevel Then
 
-                                        If L.GetValueType(Indexes(I)) <> HoomanType.HoomanTypeComplex Then
-                                            L.SetLimb(Indexes(I), -1) = New HoomanLimbs
+                                        If L.GetValueType(Status.Indexes(I)) <> HoomanType.HoomanTypeComplex Then
+                                            Dim PrevWildcard As Boolean = L.Item(Status.Indexes(I)).JollyName
+                                            L.SetLimb(Status.Indexes(I), -1) = New HoomanLimbs
+                                            L.Item(Status.Indexes(I)).JollyName = PrevWildcard
                                         End If
 
                                     End If
 
-                                    L = L(Indexes(I))
+                                    L = L(Status.Indexes(I))
 
                                 Next
 
@@ -446,21 +474,21 @@ Public Class HoomanParser
                                     ' It's possible to reset only not-hooman branch
                                     '----------------------------------------------
 
-                                    If Value = "@" And Not Indexes(1).ToLower = "hooman" Then
+                                    If Value = "@" And Not Status.Indexes(1).ToLower = "hooman" Then
                                         L.SetString(Name, Row) = ""
                                     End If
 
                                 Else
 
-                                    If Indexes(1).ToLower = "hooman" Then
+                                    If Status.Indexes(1).ToLower = "hooman" Then
 
                                         If Not L.Exists(Name) Then
 
-                                            If Indexes(2) IsNot Nothing AndAlso
-                                               Indexes(2).ToLower = "syntax" Then
+                                            If Status.Indexes(2) IsNot Nothing AndAlso
+                                               Status.Indexes(2).ToLower = "syntax" Then
 #Region "Syntax"
-                                                If Indexes(3) IsNot Nothing AndAlso
-                                                    Indexes(3).ToLower = "structure" Then
+                                                If Status.Indexes(3) IsNot Nothing AndAlso
+                                                    Status.Indexes(3).ToLower = "structure" Then
 #Region "Structure"
                                                     If Value = "!" Then
 
@@ -469,7 +497,15 @@ Public Class HoomanParser
                                                         Dim MandatoryPath As String = ""
 
                                                         For I = 4 To ParentLevel
-                                                            MandatoryPath += Indexes(I).ToLower + "\"
+                                                            If (Status.Iterables(I)) Then
+                                                                MandatoryPath += "["
+                                                            End If
+                                                            If (Status.Wildcards(I)) Then
+                                                                MandatoryPath += "*\"
+                                                            Else
+                                                                MandatoryPath += Status.Indexes(I).ToLower + "\"
+                                                            End If
+
                                                         Next
                                                         MandatoryPath += Name.ToLower
 
@@ -484,12 +520,30 @@ Public Class HoomanParser
 
                                                         L.SetString(Name, Row) = ""
                                                         L.Item(Name).JollyName = True
+                                                        Status.Wildcards(ParentLevel + 1) = True
                                                         JollyRow = Row + 1
+
+                                                        Dim WildcardPath As String = ""
+
+                                                        For I = 4 To ParentLevel
+                                                            If (Status.Iterables(I)) Then
+                                                                WildcardPath += "["
+                                                            End If
+                                                            If (Status.Wildcards(I)) Then
+                                                                WildcardPath += "*\"
+                                                            Else
+                                                                WildcardPath += Status.Indexes(I).ToLower + "\"
+                                                            End If
+
+                                                        Next
+                                                        WildcardPath += "*"
+                                                        WildcardPaths += "|" + WildcardPath
 
                                                     ElseIf Value = "..." Then
 
                                                         L.SetString(Name, Row) = ""
                                                         L.Item(Name).Iterable = True
+                                                        Status.Iterables(ParentLevel + 1) = True
 
                                                     Else
 
@@ -501,8 +555,8 @@ Public Class HoomanParser
 
                                                     End If
 #End Region
-                                                ElseIf Indexes(3) IsNot Nothing AndAlso
-                                                    Indexes(3).ToLower = "rules" Then
+                                                ElseIf Status.Indexes(3) IsNot Nothing AndAlso
+                                                    Status.Indexes(3).ToLower = "rules" Then
 #Region "Rules"
                                                     L.SetString(Name, Row) = Value
 
@@ -542,6 +596,10 @@ Public Class HoomanParser
 
                                         L.SetString(Name, Row) = Value
 
+                                        If WildcardPaths.IndexOf("|" + ParentPath + "*") >= 0 Then
+                                            L.Item(Name).JollyName = True
+                                        End If
+
                                     End If
 
                                 End If
@@ -580,11 +638,11 @@ Public Class HoomanParser
 
         Loop
 
-        Indexes(ParentLevel + 1) = ""
+        Status.Indexes(ParentLevel + 1) = ""
 
     End Sub
 
-    Private Sub HoomanInclude(sBuffer As String, ParentName As String, ParentLevel As Integer, ByRef Indexes As String())
+    Private Sub HoomanInclude(sBuffer As String, ParentName As String, ParentPath As String, ParentLevel As Integer, ByRef Status As StructStatus)
 
         Dim MatchRows As MatchCollection
         Dim MatchTest As Match
@@ -603,7 +661,7 @@ Public Class HoomanParser
 
         MatchRows = Regex.Matches(sBuffer, "^( *)(.*)$", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
-        HoomanAnalysis(MatchRows, 0, ParentName, ParentLevel, -1, Indexes)
+        HoomanAnalysis(MatchRows, 0, ParentName, ParentPath, ParentLevel, -1, Status)
 
         IndentationSize = SaveIndentationSize
         TabEquivalence = SaveTabEquivalence
@@ -643,39 +701,55 @@ Public Class HoomanParser
 
     End Function
 
-    Public Function PathExists(ParamArray Names As String()) As Boolean
+    Private Sub PathExists(L As HoomanLimbs, MandInd As Integer, Names As String(), CurrLevel As Integer, IterName As String, IterLevel As Integer)
 
-        Dim L As HoomanLimbs = PropLimbs
         Dim I As Integer
         Dim E As Boolean = True
+        Dim CurrName As String = Names(CurrLevel)
 
-        For I = 0 To Names.Count - 1
+        If IterName <> "" Then
+            If L.Exists(IterName) Then
+                PathExists(L(IterName), MandInd, Names, IterLevel + 1, IterName, IterLevel)
+            End If
+        End If
 
-            If L.Exists(Names(I)) Then
+        If CurrName.StartsWith("[") Then
 
-                If L.GetValueType(Names(I)) = HoomanType.HoomanTypeComplex Then
+            CurrName = Names(CurrLevel).Substring(1)
+            IterName = CurrName
+            IterLevel = CurrLevel
 
-                    L = L(Names(I))
+        End If
 
-                Else
+        If CurrName = "*" Then
 
-                    E = (I = Names.Count - 1)
-                    Exit For
+            For I = 1 To L.Count
+                PathExists(L(I), MandInd, Names, CurrLevel + 1, IterName, IterLevel)
+            Next
 
-                End If
+        ElseIf L.Exists(CurrName) Then
+
+            If L.GetValueType(CurrName) = HoomanType.HoomanTypeComplex Then
+
+                PathExists(L(CurrName), MandInd, Names, CurrLevel + 1, IterName, IterLevel)
 
             Else
 
-                E = False
-                Exit For
+                E = (CurrLevel = Names.Length - 1)
 
             End If
 
-        Next
+        Else
 
-        Return E
+            E = False
 
-    End Function
+        End If
+
+        If Not E Then
+            Throw New Exception("The path [ " + ArrayMandatories(MandInd) + " ] is mandatory at row " + CStr(L.Row))
+        End If
+
+    End Sub
 
     Private Sub SyntaxChecking()
 
@@ -755,7 +829,11 @@ Public Class HoomanParser
 
             Else
 
-                P = pathlevel + L.Item(I).Name.ToLower + "\"
+                If L.Item(I).JollyName Then
+                    P = pathlevel + "*\"
+                Else
+                    P = pathlevel + L.Item(I).Name.ToLower + "\"
+                End If
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
@@ -907,12 +985,7 @@ Public Class HoomanParser
         For I = 1 To MaxMandatory
 
             V = Split(ArrayMandatories(I), "\")
-
-            If Not PathExists(V) Then
-
-                Throw New Exception("The path [ " + ArrayMandatories(I) + " ] is mandatory")
-
-            End If
+            PathExists(PropLimbs, I, V, 0, "", -1)
 
         Next
 

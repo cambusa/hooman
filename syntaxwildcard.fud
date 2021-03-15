@@ -1,0 +1,54 @@
+hooman
+    version 1
+    syntax
+        structure
+            root
+                dummy
+                levels ...
+                    id *
+                        dummy !
+                        levels
+                        
+                    
+            fields
+                id *
+                    type string
+                    value
+                    length
+                
+        rules
+            1
+                ==> 
+                type (string|number|date)
+            +
+                type number
+                ==>
+                value \d+(\.\d+)?
+            +
+                type date
+                ==>
+                value {(\d{4})-(\d{2})-(\d{2})}
+
+root
+    dummy any
+    levels
+        1
+            dummy any2
+            levels
+                1
+                    dummy any3
+                    levels
+                    
+
+fields
+	name
+		value Johann Sebastian Bach
+
+	amount
+		type number
+		value 23.45
+
+	tradedate
+		type date
+		value 2021-03-31
+
