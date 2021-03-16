@@ -420,7 +420,7 @@ Public Class HoomanParser
 
                         Else
 
-                            MatchArgs = Regex.Match(sRow + " ", "(\w+|\+) +(.*)", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
+                            MatchArgs = Regex.Match(sRow + " ", "^(\w+|\+) +(.*)", RegexOptions.IgnoreCase Or RegexOptions.Multiline)
 
                             If MatchArgs.Success Then
 
