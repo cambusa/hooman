@@ -1222,4 +1222,27 @@ Public Class HoomanParser
 
     End Function
 
+    Public Function PathValue(StrPath As String, DefaultValue As String) As String
+
+        Try
+            Dim PathArray() As String = StrPath.Split({"/"}, StringSplitOptions.RemoveEmptyEntries)
+
+            Dim L As HoomanLimbs = PropLimbs
+
+            Dim I As Integer
+
+            For I = 0 To PathArray.Length - 2
+                L = L(PathArray(I))
+            Next
+
+            Return L(PathArray(I), DefaultValue)
+
+        Catch ex As Exception
+
+            Return DefaultValue
+
+        End Try
+
+    End Function
+
 End Class
