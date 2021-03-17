@@ -1245,4 +1245,10 @@ Public Class HoomanParser
 
     End Function
 
+    Public Function PathValue(StrPath As String) As String
+
+        Return PathValue(StrPath, "")
+
+    End Function
+
 End Class
