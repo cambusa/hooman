@@ -12,7 +12,7 @@ structure
         matrix
             rows
                 row *
-                    cols
+                    cols !
                         col *
     data
         link

@@ -1,7 +1,7 @@
 # Hooman v1.3 <img align="right" height="150" src="https://raw.githubusercontent.com/cambusa/hooman/master/hooman04.png">
 
 
-__Specification for a new human-writable declarative language - © 2020 Rodolfo Calzetti__
+__Specification for a new human-writable metalanguage - © 2021 Rodolfo Calzetti__
 
 It's an alternative to XML, JSON and YAML if the document is to be written by a human.
 
@@ -32,9 +32,9 @@ Notable features:
 
 ```!```: mandatory in the syntactic structure 
 
-```*```: jollyname in the syntactic structure (for numerical/associative index)
+```*```: wildcard in the syntactic structure (for numerical/associative index)
 
-```...```: iterable branch in the syntactic structure (for recursion) 
+```...```: recursive branch in the syntactic structure (for recursion) 
 
 ```==>```: entail in the syntactic rules 
 

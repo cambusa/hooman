@@ -2,8 +2,6 @@ hooman
     version 1
     syntax
         <-- syntax.fud
-        <-- include3.fud
-        <-- virtualhooman
         
 extract
     mandatorio
@@ -24,31 +22,4 @@ extract
     matrix
         rows
  
-data
-    link
-        subdata
-            name Morena
-            link
-                subdata
-                    name Serafino
-                    value 20021223
-                    link
-                        subdata
-                            name Giorgio
-                    subsubdata
-                        id UASHDBFUSHDBF 
-
-complesso
-    <<
-        Pippo
-          >>
-          Topolino    
-        <-- include1.fud
-   
-    <-- virtualinclude
-    <-- include2.fud
-        s
-    >>
-
-<-- include1.fud
 

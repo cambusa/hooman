@@ -8,11 +8,13 @@ Public Class Form1
 
         H = New hooman.HoomanParser
 
-        Dim PathFud As String = "c:\github\hooman\structure_wildcard_mandatory.fud"
+        Dim PathFud As String = "c:\github\hooman\syntaxwildcard.fud"
+        'Dim PathFud As String = "c:\github\hooman\structure_wildcard_mandatory.fud"
         'Dim PathFud As String = "c:\github\hooman\test1.fud"
         'Dim PathFud As String = "c:\github\hooman\checked.fud"
         'Dim PathFud As String = "c:\github\hooman\fivespaces.fud"
         'Dim PathFud As String = "c:\github\hooman\tabs.fud"
+        'Dim PathFud As String = "c:\github\hooman\test01_including.fud"
 
         H.OnErrorRaise = False
         If Not H.LoadHooman(PathFud) Then

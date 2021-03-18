@@ -1,10 +1,7 @@
 hooman
     version 1
     syntax
-        structure
-            extract *
-                data
-                matrix
+            
         
 extract
     data
@@ -13,7 +10,7 @@ extract
             type char
             length 10
         description
-            offset2 11
+            offset 11
             type char
             length 50
     matrix

@@ -15,7 +15,10 @@ hooman
                     type string
                     value
                     length
-                
+            
+            livello
+                sublivello
+            
         rules
             1
                 ==> 
@@ -28,6 +31,9 @@ hooman
                 type date
                 ==>
                 value {(\d{4})-(\d{2})-(\d{2})}
+
+livello
+    
 
 root
     dummy any

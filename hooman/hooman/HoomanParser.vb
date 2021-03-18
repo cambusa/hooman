@@ -35,6 +35,7 @@ Public Class HoomanParser
     Dim MaxMandatory As Integer
     Dim IndentationSize As Integer = 4
     Dim TabEquivalence As String = "    "
+    Dim CurrDocumentName As String = ""
 
     Dim CollDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
     Dim ParentOfDefault As Dictionary(Of String, String) = New Dictionary(Of String, String)
@@ -43,9 +44,11 @@ Public Class HoomanParser
     Public Event VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String)
 
     Private Structure StructStatus
+
         Dim Indexes As String()
         Dim Wildcards As Boolean()
-        Dim Iterables As Boolean()
+        Dim Recursives As Boolean()
+
     End Structure
 
     Public ReadOnly Property Limbs() As HoomanLimbs
@@ -233,10 +236,11 @@ Public Class HoomanParser
             CollDefault.Clear()
             ParentOfDefault.Clear()
             DefaultExists = False
+            CurrDocumentName = ""
 
             ReDim Status.Indexes(1000)
             ReDim Status.Wildcards(1000)
-            ReDim Status.Iterables(1000)
+            ReDim Status.Recursives(1000)
 
             ' Solving indentation size 
             IndentationSize = 4
@@ -292,7 +296,7 @@ Public Class HoomanParser
         Dim FlagEntail As Boolean = False
         Dim FlagRule As Boolean = False
         Dim ObjRule As HoomanRule = Nothing
-        Dim JollyRow As Integer = 0
+        Dim WildcardRow As Integer = 0
 
         Do While (Row < MatchRows.Count)
 
@@ -340,7 +344,7 @@ Public Class HoomanParser
 
                                 If Row >= MatchRows.Count Then
 
-                                    Throw New Exception("The guillemots at row " + Str(SaveRow + 1) + " have not a closure")
+                                    Throw New Exception(CurrDocumentName + "The guillemots at row " + Str(SaveRow + 1) + " have not a closure")
 
                                 End If
 
@@ -371,7 +375,7 @@ Public Class HoomanParser
 
                                     ElseIf Not sRow.Trim.StartsWith("***") Then
 
-                                        Throw New Exception("Wrong indentation at row " + Str(Row + 1))
+                                        Throw New Exception(CurrDocumentName + "Wrong indentation at row " + Str(Row + 1))
 
                                     End If
 
@@ -381,7 +385,7 @@ Public Class HoomanParser
 
                                 Else
 
-                                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
+                                    Throw New Exception(CurrDocumentName + "Wrong indentation at row " + Str(Row + 1))
 
                                 End If
 
@@ -398,8 +402,14 @@ Public Class HoomanParser
 
                         ElseIf sRow.StartsWith("<--") Then
 
-                            sRow = sRow.Substring(3).Trim
+                            Dim SaveDocumentName As String = CurrDocumentName
+
+                            sRow = sRow.Trim.Substring(3).Trim
+                            CurrDocumentName = "[ " + sRow + " ] "
+
                             HoomanInclude(HoomanLoadFile(sRow, Row + 1), ParentName, ParentPath, ParentLevel, Status)
+
+                            CurrDocumentName = SaveDocumentName
 
                         ElseIf sRow = "==>" Then
 
@@ -414,7 +424,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("==> is not allowed outside [ hooman\syntax\rules ] at row " + Str(Row + 1))
+                                Throw New Exception(CurrDocumentName + "==> is not allowed outside [ hooman\syntax\rules ] at row " + Str(Row + 1))
 
                             End If
 
@@ -438,13 +448,13 @@ Public Class HoomanParser
                                     If MatchArgs.Success Then
                                         Name = Str(Val(Status.Indexes(ParentLevel + 1)) + 1).Trim
                                     Else
-                                        Throw New Exception("The plus cannot be resolved at row " + Str(Row + 1))
+                                        Throw New Exception(CurrDocumentName + "The plus cannot be resolved at row " + Str(Row + 1))
                                     End If
                                 End If
 
                                 Status.Indexes(ParentLevel + 1) = Name
                                 Status.Wildcards(ParentLevel + 1) = False
-                                Status.Iterables(ParentLevel + 1) = False
+                                Status.Recursives(ParentLevel + 1) = False
 
                                 '-------------------
                                 ' Manage assignment
@@ -457,9 +467,9 @@ Public Class HoomanParser
                                     If I = ParentLevel Then
 
                                         If L.GetValueType(Status.Indexes(I)) <> HoomanType.HoomanTypeComplex Then
-                                            Dim PrevWildcard As Boolean = L.Item(Status.Indexes(I)).JollyName
+                                            Dim PrevWildcard As Boolean = L.Item(Status.Indexes(I)).Wildcard
                                             L.SetLimb(Status.Indexes(I), -1) = New HoomanLimbs
-                                            L.Item(Status.Indexes(I)).JollyName = PrevWildcard
+                                            L.Item(Status.Indexes(I)).Wildcard = PrevWildcard
                                         End If
 
                                     End If
@@ -497,7 +507,7 @@ Public Class HoomanParser
                                                         Dim MandatoryPath As String = ""
 
                                                         For I = 4 To ParentLevel
-                                                            If (Status.Iterables(I)) Then
+                                                            If (Status.Recursives(I)) Then
                                                                 MandatoryPath += "["
                                                             End If
                                                             If (Status.Wildcards(I)) Then
@@ -519,14 +529,14 @@ Public Class HoomanParser
                                                     ElseIf Value = "*" Then
 
                                                         L.SetString(Name, Row) = ""
-                                                        L.Item(Name).JollyName = True
+                                                        L.Item(Name).Wildcard = True
                                                         Status.Wildcards(ParentLevel + 1) = True
-                                                        JollyRow = Row + 1
+                                                        WildcardRow = Row + 1
 
                                                         Dim WildcardPath As String = ""
 
                                                         For I = 4 To ParentLevel
-                                                            If (Status.Iterables(I)) Then
+                                                            If (Status.Recursives(I)) Then
                                                                 WildcardPath += "["
                                                             End If
                                                             If (Status.Wildcards(I)) Then
@@ -542,8 +552,8 @@ Public Class HoomanParser
                                                     ElseIf Value = "..." Then
 
                                                         L.SetString(Name, Row) = ""
-                                                        L.Item(Name).Iterable = True
-                                                        Status.Iterables(ParentLevel + 1) = True
+                                                        L.Item(Name).Recursive = True
+                                                        Status.Recursives(ParentLevel + 1) = True
 
                                                     Else
 
@@ -597,22 +607,22 @@ Public Class HoomanParser
                                         L.SetString(Name, Row) = Value
 
                                         If WildcardPaths.IndexOf("|" + ParentPath + "*") >= 0 Then
-                                            L.Item(Name).JollyName = True
+                                            L.Item(Name).Wildcard = True
                                         End If
 
                                     End If
 
                                 End If
 
-                                If (JollyRow > 0) Then
+                                If (WildcardRow > 0) Then
                                     If (L.Count() > 1) Then
-                                        Throw New Exception("A wildcard variable cannot have siblings at row " + Str(JollyRow))
+                                        Throw New Exception(CurrDocumentName + "A wildcard variable cannot have siblings at row " + Str(WildcardRow))
                                     End If
                                 End If
 
                             Else
 
-                                Throw New Exception("Wrong syntax at row " + Str(Row + 1))
+                                Throw New Exception(CurrDocumentName + "Wrong syntax at row " + Str(Row + 1))
 
                             End If
 
@@ -626,7 +636,7 @@ Public Class HoomanParser
 
                 Else
 
-                    Throw New Exception("Wrong indentation at row " + Str(Row + 1))
+                    Throw New Exception(CurrDocumentName + "Wrong indentation at row " + Str(Row + 1))
 
                 End If
 
@@ -729,13 +739,17 @@ Public Class HoomanParser
 
         ElseIf L.Exists(CurrName) Then
 
-            If L.GetValueType(CurrName) = HoomanType.HoomanTypeComplex Then
+            If CurrLevel < Names.Length - 1 Then
 
-                PathExists(L(CurrName), MandInd, Names, CurrLevel + 1, IterName, IterLevel)
+                If L.GetValueType(CurrName) = HoomanType.HoomanTypeComplex Then
 
-            ElseIf CurrLevel < Names.Length - 1 AndAlso Names(CurrLevel + 1) <> "*" Then
+                    PathExists(L(CurrName), MandInd, Names, CurrLevel + 1, IterName, IterLevel)
 
-                E = False
+                ElseIf Names(CurrLevel + 1) <> "*" Then
+
+                    E = False
+
+                End If
 
             End If
 
@@ -746,7 +760,7 @@ Public Class HoomanParser
         End If
 
         If Not E Then
-            Throw New Exception("The path [ " + ArrayMandatories(MandInd) + " ] is mandatory at row " + CStr(L.Row))
+            Throw New Exception(CurrDocumentName + "The path [ " + ArrayMandatories(MandInd) + " ] is mandatory at row " + CStr(L.Row))
         End If
 
     End Sub
@@ -821,7 +835,7 @@ Public Class HoomanParser
 
                     Else
 
-                        Throw New Exception("The path [ " + pathlevel + S.Name.ToLower + " ] is not allowed at row " + CStr(S.Row))
+                        Throw New Exception(CurrDocumentName + "The path [ " + pathlevel + S.Name.ToLower + " ] is not allowed at row " + CStr(S.Row))
 
                     End If
 
@@ -829,7 +843,7 @@ Public Class HoomanParser
 
             Else
 
-                If L.Item(I).JollyName Then
+                If L.Item(I).Wildcard Then
                     P = pathlevel + "*\"
                 Else
                     P = pathlevel + L.Item(I).Name.ToLower + "\"
@@ -837,12 +851,15 @@ Public Class HoomanParser
 
                 If ListPaths.IndexOf("|" + P) = -1 Then
 
-                    Throw New Exception("The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
+                    Throw New Exception(CurrDocumentName + "The path [ " + pathlevel + L.Item(I).Name.ToLower + " ] is not allowed at row " + CStr(L.Item(I).Row))
 
                 ElseIf (ListPaths + "|").IndexOf("|" + P + "|") = -1 AndAlso
                        (ListPaths + "*").IndexOf("|" + P + "*") = -1 Then
 
-                    Throw New Exception("The variable [ " + pathlevel + L.Item(I).Name.ToLower + " ] must be complex at row " + CStr(L.Item(I).Row))
+                    Dim PrevWildcard As Boolean = L.Item(I).Wildcard
+                    L.SetLimb(L.Item(I).Name, -1) = New HoomanLimbs
+                    L.Item(I).Wildcard = PrevWildcard
+                    'Throw New Exception(CurrDocumentName + "The variable [ " + pathlevel + L.Item(I).Name.ToLower + " ] must be complex at row " + CStr(L.Item(I).Row))
 
                 End If
 
@@ -936,9 +953,9 @@ Public Class HoomanParser
 
                 S = L(I)
 
-                If L.Item(I).JollyName Then
+                If L.Item(I).Wildcard Then
                     P = pathlevel + "*\"
-                ElseIf L.Item(I).Iterable Then
+                ElseIf L.Item(I).Recursive Then
                     P = pathlevel + "[" + S.Name.ToLower + "...\"
                     ListPaths += "|" + pathlevel + S.Name.ToLower + "\"
                 Else
@@ -1015,7 +1032,7 @@ Public Class HoomanParser
 
                     If HoomanIndexGetRules(S.Name) IsNot Nothing Then
 
-                        Throw New Exception("The [ " + S.Name + " ] variable must be simple at row " + CStr(S.Row))
+                        Throw New Exception(CurrDocumentName + "The [ " + S.Name + " ] variable must be simple at row " + CStr(S.Row))
 
                     End If
 
@@ -1079,7 +1096,7 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception("The [ " + IdRule + " ] variable is mandatory because it is precondition in a rule at row " + CStr(Row))
+                                Throw New Exception(CurrDocumentName + "The [ " + IdRule + " ] variable is mandatory because it is precondition in a rule at row " + CStr(Row))
 
                             End If
 
@@ -1116,7 +1133,7 @@ Public Class HoomanParser
 
                                     If Not MatchRule.Success Then
 
-                                        Throw New Exception("The [ " + Id + " " + Vl + " ] assignment does not match the pattern at row " + CStr(Row))
+                                        Throw New Exception(CurrDocumentName + "The [ " + Id + " " + Vl + " ] assignment does not match the pattern at row " + CStr(Row))
 
                                     ElseIf CheckDate Then
 
@@ -1147,18 +1164,18 @@ Public Class HoomanParser
 
                                             Case Else
 
-                                                Throw New Exception("Bad date pattern at row " + CStr(Row) + ": the groups must be 3, 5 or 6")
+                                                Throw New Exception(CurrDocumentName + "Bad date pattern at row " + CStr(Row) + ": the groups must be 3, 5 or 6")
 
                                         End Select
 
                                         DateTest = DateSerial(Ye, Mo, Da)
 
                                         If Year(DateTest) <> Ye Or Month(DateTest) <> Mo Or Day(DateTest) <> Da Then
-                                            Throw New Exception("Bad date format at row " + CStr(Row))
+                                            Throw New Exception(CurrDocumentName + "Bad date format at row " + CStr(Row))
                                         End If
 
                                         If Ho > 23 Or Mi > 60 Or Se > 60 Then
-                                            Throw New Exception("Bad date format at row " + CStr(Row))
+                                            Throw New Exception(CurrDocumentName + "Bad date format at row " + CStr(Row))
                                         End If
 
                                     End If
@@ -1251,4 +1268,7 @@ Public Class HoomanParser
 
     End Function
 
+    Private Sub HoomanParser_VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String) Handles Me.VirtualInclude
+
+    End Sub
 End Class
