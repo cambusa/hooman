@@ -1,0 +1,10 @@
+hooman
+	version 1
+	syntax
+		structure
+			persone
+				persona *
+					nome !
+					indirizzo undefined
+
+persone

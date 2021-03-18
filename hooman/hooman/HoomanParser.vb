@@ -733,9 +733,9 @@ Public Class HoomanParser
 
                 PathExists(L(CurrName), MandInd, Names, CurrLevel + 1, IterName, IterLevel)
 
-            Else
+            ElseIf CurrLevel < Names.Length - 1 AndAlso Names(CurrLevel + 1) <> "*" Then
 
-                E = (CurrLevel = Names.Length - 1)
+                E = False
 
             End If
 
