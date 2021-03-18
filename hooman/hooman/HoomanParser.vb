@@ -1268,7 +1268,4 @@ Public Class HoomanParser
 
     End Function
 
-    Private Sub HoomanParser_VirtualInclude(Name As String, Row As Integer, ByRef Contents As String, ByRef Cancel As Boolean, ByRef ErrDescr As String) Handles Me.VirtualInclude
-
-    End Sub
 End Class
