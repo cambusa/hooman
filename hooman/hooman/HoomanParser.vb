@@ -231,7 +231,6 @@ Public Class HoomanParser
             ErrDescription = ""
             PropLimbs.Clear()
             PropRules.Clear()
-            HoomanIndexClear()
 
             CollDefault.Clear()
             ParentOfDefault.Clear()
@@ -574,14 +573,14 @@ Public Class HoomanParser
 
                                                         If Not FlagRule Then
 
-                                                            ObjRule = PropRules.Add()
+                                                            ObjRule = PropRules.CreateRule()
                                                             FlagRule = True
 
                                                         End If
 
                                                         If FlagEntail Then
                                                             ObjRule.AddClause(Name, Value)
-                                                            HoomanIndexAdd(Name, ObjRule)
+                                                            PropRules.Add(Name, ObjRule)
                                                         Else
                                                             ObjRule.AddContext(Name, Value)
                                                         End If
@@ -1030,7 +1029,7 @@ Public Class HoomanParser
 
                 If S.Name.ToLower <> "hooman" Then
 
-                    If HoomanIndexGetRules(S.Name) IsNot Nothing Then
+                    If PropRules.GetRules(S.Name) IsNot Nothing Then
 
                         Throw New Exception(CurrDocumentName + "The [ " + S.Name + " ] variable must be simple at row " + CStr(S.Row))
 
@@ -1042,7 +1041,7 @@ Public Class HoomanParser
 
             Else
 
-                Dim CollRules As Dictionary(Of Integer, HoomanRule) = HoomanIndexGetRules(L.Item(I).Name)
+                Dim CollRules As Dictionary(Of Integer, HoomanRule) = PropRules.GetRules(L.Item(I).Name)
 
                 If CollRules IsNot Nothing Then
 

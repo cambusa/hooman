@@ -1,36 +1,56 @@
 ﻿Friend Class HoomanRules
 
-    Dim CollRules As Dictionary(Of Integer, HoomanRule) = New Dictionary(Of Integer, HoomanRule)
-    Dim LastID As Integer = 0
+    Dim CollIndex As Dictionary(Of String, Dictionary(Of Integer, HoomanRule)) = New Dictionary(Of String, Dictionary(Of Integer, HoomanRule))(StringComparer.OrdinalIgnoreCase)
+    Dim LastIndexID As Integer = 0
 
-    Friend Sub Clear()
-
-        CollRules.Clear()
-        LastID = 0
-
-    End Sub
-
-    Friend Function Add() As HoomanRule
+    Friend Function CreateRule() As HoomanRule
 
         Dim ObjRule As New HoomanRule
-
-        LastID += 1
-        CollRules.Add(LastID, ObjRule)
 
         Return ObjRule
 
     End Function
 
-    Friend ReadOnly Property Dictio() As Dictionary(Of Integer, HoomanRule)
+    Friend Sub Add(Id As String, ObjRule As HoomanRule)
 
-        Get
+        Dim ObjColl As Dictionary(Of Integer, HoomanRule)
 
-            Return CollRules
+        If CollIndex.ContainsKey(Id) Then
 
-        End Get
+            ObjColl = CollIndex(Id)
 
-    End Property
+        Else
 
+            ObjColl = New Dictionary(Of Integer, HoomanRule)
+            CollIndex.Add(Id, ObjColl)
+
+        End If
+
+        LastIndexID += 1
+        ObjColl.Add(LastIndexID, ObjRule)
+
+    End Sub
+
+    Friend Sub Clear()
+
+        CollIndex.Clear()
+        LastIndexID = 0
+
+    End Sub
+
+    Friend Function GetRules(Id As String) As Dictionary(Of Integer, HoomanRule)
+
+        If CollIndex.ContainsKey(Id) Then
+
+            Return CollIndex(Id)
+
+        Else
+
+            Return Nothing
+
+        End If
+
+    End Function
 
 End Class
 
@@ -111,50 +131,3 @@ Friend Class HoomanRuleClause
 
 End Class
 
-Friend Module HoomanIndexRules
-
-    Dim CollIndex As Dictionary(Of String, Dictionary(Of Integer, HoomanRule)) = New Dictionary(Of String, Dictionary(Of Integer, HoomanRule))(StringComparer.OrdinalIgnoreCase)
-    Dim LastIndexID As Integer = 0
-
-    Friend Sub HoomanIndexAdd(Id As String, ObjRule As HoomanRule)
-
-        Dim ObjColl As Dictionary(Of Integer, HoomanRule)
-
-        If CollIndex.ContainsKey(Id) Then
-
-            ObjColl = CollIndex(Id)
-
-        Else
-
-            ObjColl = New Dictionary(Of Integer, HoomanRule)
-            CollIndex.Add(Id, ObjColl)
-
-        End If
-
-        LastIndexID += 1
-        ObjColl.Add(LastIndexID, ObjRule)
-
-    End Sub
-
-    Friend Sub HoomanIndexClear()
-
-        CollIndex.Clear()
-        LastIndexID = 0
-
-    End Sub
-
-    Friend Function HoomanIndexGetRules(Id As String) As Dictionary(Of Integer, HoomanRule)
-
-        If CollIndex.ContainsKey(Id) Then
-
-            Return CollIndex(Id)
-
-        Else
-
-            Return Nothing
-
-        End If
-
-    End Function
-
-End Module
