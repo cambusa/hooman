@@ -423,7 +423,8 @@ Public Class HoomanParser
 
                             Else
 
-                                Throw New Exception(CurrDocumentName + "==> is not allowed outside [ hooman\syntax\rules ] at row " + Str(Row + 1))
+                                'Tolerated: the document may be a syntax inclusion
+                                'Throw New Exception(CurrDocumentName + "==> is not allowed outside [ hooman\syntax\rules ] at row " + Str(Row + 1))
 
                             End If
 
