@@ -1078,7 +1078,7 @@ Public Class HoomanParser
                         For Each kvContext As KeyValuePair(Of Integer, HoomanRuleContext) In kvRule.Value.DictioContext
 
                             IdRule = kvContext.Value.Name
-                            VlRule = kvContext.Value.Value
+                            VlRule = kvContext.Value.Pattern
 
                             If ContextAssign.ContainsKey(IdRule) Then
 

@@ -71,12 +71,12 @@ Friend Class HoomanRule
 
     End Sub
 
-    Friend Sub AddContext(Name As String, Value As String)
+    Friend Sub AddContext(Name As String, Pattern As String)
 
         Dim ObjContext As New HoomanRuleContext
 
         ObjContext.Name = Name
-        ObjContext.Value = Value
+        ObjContext.Pattern = Pattern
 
         ContextID += 1
         CollContext.Add(ContextID, ObjContext)
@@ -120,7 +120,7 @@ End Class
 Friend Class HoomanRuleContext
 
     Friend Name As String = ""
-    Friend Value As String = ""
+    Friend Pattern As String = ""
 
 End Class
 
