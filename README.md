@@ -55,7 +55,7 @@ Read the [wiki](https://github.com/cambusa/hooman/wiki) to learn more.
 ```    
 hooman
     version 1
-    *** includo la sintassi del linguaggio oggetto
+    *** inclusion of object language syntax
     <-- syntax.fud
     
 fields
