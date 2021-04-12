@@ -42,200 +42,70 @@ Notable features:
 
 ---
 
-_Example for ETL configuration_
+## Wiki
 
-```    
-hooman
-    version 1
-
-extract
-    data
-        code
-            offset 1
-            type char
-            length 10
-        description
-            offset 11
-            type char
-            length 50
-         
-transform
-    *** Script follows
-    <<javascript
-    <-- sample.js
-    javascript>>
-    
-load
-    *** other stuffs
-    
-```
+Read the [wiki](https://github.com/cambusa/hooman/wiki) to learn more.
 
 ---
 
-_Example for texnical document_
+## Example
+
+*main.fud*
 
 ```    
 hooman
     version 1
-
-document
-    <<latex
-        Trick to solve integrals of rational functions:
+    *** includo la sintassi del linguaggio oggetto
+    <-- syntax.fud
+    
+fields
+    name
+        value Johann Sebastian Bach
         
-        $\int{\frac{Mx+N}{p(x)}dx}=\lambda \times ln(p)+\mu \times arctg\frac{p'}{\sqrt{-\Delta}}$
-    latex>>
-    
-```    
-    
----
-
-_Example with inclusion and branch redefinition_
-
-```    
-hooman
-    version 1
-
-document
-    <-- include.fud
-
-document @
-document
-    new_structure
-
-```    
-    
-
----
-
-_Example for lists and arrays_
-
-```    
-hooman
-    version 1
-
-shopping_list
-    1 apples
-    2 milk
-    3 oatmeal
-    
-*** but also...
-shopping_list_2
-    1 apples
-    + milk
-    + oatmeal
-
-worksheet
-    rows 
-        1
-            color white
-            cols
-                1
-                    label Amount
-                    type float
-                    value 1234.56
-        +
-            color yellow
-            cols
-                +
-                    label Name 
-                    type char
-                    value Goofy
-            
-    
+    amount
+        type number
+        value 23.45
         
+    tradedate
+        type date
+        value 2021-03-31
+        
+    memo
+        value 
+        fields
+            biography
+                value something
+
+text
+    <<
+    >>
 ```    
-    
-_Example with syntax checking_
+
+*syntax.fud*
 
 ```    
-hooman
-    version 1
-    syntax
-        structure
-            data !
-                name !
-                address
-                    city
-                subdata ...
-                    link
-                        subdata
+syntax
+    structure
+        fields ...
+            id *
+                type string
+                value !
+                length
+                fields
+        text
 
-            worksheet
-                rows 
-                    rowindex *
-                        color
-                        cols
-                            colindex *
-                                label
-                                type
-                                value
-        rules
-            1
-                ==> 
-                type (char|float|date)
-            +
-                type float
-                ==>
-                value \d+(\.\d+)?
-            +
-                type date
-                ==>
-                value \d{8}
-
-data
-    name Rodolfo
-    address
-        city Milan
-
-worksheet
-    rows 
+    rules
         1
-            color white
-            cols
-                0
-                    label Amount
-                    type float
-                    value 1234.56
+            ==> 
+            type (string|number|date)
         +
-            color yellow
-            cols
-                +
-                    label Name 
-                    type char
-                    value Goofy
-
-```    
-
-_Example with external syntax checking_
-
-```    
-hooman
-    version 1
-    syntax
-        <--  ..\grammar\syntax.fud
-
-data
-    name Rodolfo
-    address
-        city Milan
-
-worksheet
-    rows 
-        1
-            color white
-            cols
-                0
-                    label Amount
-                    type float
-                    value 1234.56
+            type number
+            ==>
+            value \d+(\.\d+)?
         +
-            color yellow
-            cols
-                +
-                    label Name 
-                    type char
-                    value Goofy
-
+            type date
+            ==>
+            value {(\d{4})-(\d{2})-(\d{2})}
 ```    
 
 ---
